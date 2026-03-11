@@ -1,6 +1,25 @@
 spring:
   application:
     name: puja-backend
+
   cloud:
     config:
       enabled: false
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/puja_marketplace
+    username: root
+    password: 8848
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+server:
+  port: 8080
+
+eureka:
+  client:
+    enabled: false

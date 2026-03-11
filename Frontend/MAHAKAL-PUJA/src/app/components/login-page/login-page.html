@@ -1,0 +1,117 @@
+<!-- 
+<div class="RAM">
+  <div class="login-container">
+    
+    <div class="logo-wrapper">
+      <img src="assets/images/LORD_NATRAJ.png" alt="Lord Natraj" class="logo" />
+    </div>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input id="name" type="text" formControlName="name" placeholder="Eg: SHIVA" (blur)="loginForm.get('name')?.markAsTouched()" />
+      <div class="error" *ngIf="(f.['name'].touched || f.name.dirty || submitted) && f.name.invalid">
+        <span class="name-error" *ngIf="f.name.errors?.required">Name is required.</span>
+        <span *ngIf="f.name.errors?.pattern">Name cannot be empty.</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="contact">Phone or Email</label>
+      <div class="contact-input">
+        <input id="contact" type="text" formControlName="contact" placeholder="Eg: Shiva@gmail.com" (blur)="loginForm.get('contact')?.markAsTouched()" />
+      </div>
+      <div class="error" *ngIf="(f.contact.touched || f.contact.dirty || submitted) && f.contact.invalid">
+        <span *ngIf="f.contact.errors?.required">Contact is required.</span>
+        <span *ngIf="f.contact.errors?.invalidContact">Enter a valid email or phone number.</span>
+      </div>
+    </div>
+
+    <button type="submit">Continue</button>
+    <hr class="divider" />
+    <div class="alt-action">
+      Already have an account? 
+      <a routerLink="/sign-in" class="sign-in-link">Just Sign-in.</a>
+    </div>
+  </form>
+  </div>
+</div> -->
+<div class="RAM">
+  <div class="login-container">
+
+    <!-- lord natraj image -->
+    <div class="logo-wrapper">
+      <img src="assets/images/LORD_NATRAJ.png" alt="Lord Natraj" class="logo" />
+    </div>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate>
+
+      <!-- NAME -->
+      <div class="form-group">
+        <label for="name">Name</label>
+
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Eg: SHIVA"
+          (blur)="loginForm.get('name')?.markAsTouched()"
+        />
+
+        <div
+          class="error"
+          *ngIf="(f['name'].touched || f['name'].dirty || submitted) && f['name'].invalid"
+        >
+          <span class="name-error" *ngIf="f['name'].errors?.['required']">
+            Name is required.
+          </span>
+
+          <span *ngIf="f['name'].errors?.['pattern']">
+            Name cannot be empty.
+          </span>
+        </div>
+      </div>
+
+
+      <!-- CONTACT -->
+      <div class="form-group">
+        <label for="contact">Phone or Email</label>
+
+        <div class="contact-input">
+          <input
+            id="contact"
+            type="text"
+            formControlName="contact"
+            placeholder="Eg: Shiva@gmail.com"
+            (blur)="loginForm.get('contact')?.markAsTouched()"
+          />
+        </div>
+
+        <div
+          class="error"
+          *ngIf="(f['contact'].touched || f['contact'].dirty || submitted) && f['contact'].invalid"
+        >
+          <span *ngIf="f['contact'].errors?.['required']">
+            Contact is required.
+          </span>
+
+          <span *ngIf="f['contact'].errors?.['invalidContact']">
+            Enter a valid email or phone number.
+          </span>
+        </div>
+      </div>
+
+
+      <!-- BUTTON -->
+      <button type="submit">Continue</button>
+
+      <hr class="divider" />
+
+      <div class="alt-action">
+        Already have an account?
+        <a routerLink="/sign-in" class="sign-in-link">Just Sign-in.</a>
+      </div>
+
+    </form>
+
+  </div>
+</div>
