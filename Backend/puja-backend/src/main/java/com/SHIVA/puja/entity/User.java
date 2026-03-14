@@ -19,6 +19,7 @@ public class User {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(unique = true)
     private String email;
 
     private String role;
@@ -30,6 +31,12 @@ public class User {
 
     @Column(name = "email_verified")
     private Boolean emailVerified;
+
+    @Column(name = "password_hash")
+    private String passwordHash;
+
+    @Column(name = "last_login_at")
+    private LocalDateTime lastLoginAt;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

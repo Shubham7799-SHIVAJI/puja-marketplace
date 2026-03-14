@@ -2,18 +2,18 @@ package com.SHIVA.puja.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Pattern;
 import lombok.Data;
 
 @Data
-public class LoginRequest {
-
-    @NotBlank(message = "Name is required")
-    @Size(max = 100, message = "Name must be at most 100 characters")
-    private String name;
+public class VerifyOtpRequest {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Please provide a valid email address")
     private String contact;
+
+    @NotBlank(message = "OTP is required")
+    @Pattern(regexp = "\\d{6}", message = "OTP must be a 6-digit number")
+    private String otp;
 
 }

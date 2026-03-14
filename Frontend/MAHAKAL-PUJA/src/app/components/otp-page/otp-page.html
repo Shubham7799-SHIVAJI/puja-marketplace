@@ -1,0 +1,66 @@
+<div class="RAM">
+	<div class="otp-container">
+		<div class="logo-wrapper">
+			<img src="assets/images/LORD_NATRAJ.png" alt="Lord Natraj" class="logo" />
+		</div>
+
+		<div class="otp-header">
+			<p class="eyebrow">{{ text.eyebrow }}</p>
+			<h1>{{ text.title }}</h1>
+			<p class="otp-message">
+				{{ text.introPrefix }} {{ contactTypeLabel }}
+				<span class="otp-contact">{{ maskedContact }}</span>
+				<span *ngIf="displayName">{{ text.namePrefix }} {{ displayName }}</span>{{ text.introSuffix }}
+			</p>
+		</div>
+
+		<form [formGroup]="otpForm" (ngSubmit)="onSubmit()" novalidate>
+			<div class="otp-grid" (paste)="onPaste($event)">
+				<input
+					*ngFor="let index of otpIndexes; trackBy: trackByIndex"
+					#otpInput
+					class="otp-input"
+					type="text"
+					inputmode="numeric"
+					autocomplete="one-time-code"
+					maxlength="1"
+					[formControlName]="'otp' + index"
+					[attr.aria-label]="'OTP digit ' + (index + 1)"
+					(input)="onDigitInput($event, index)"
+					(keydown)="onKeyDown($event, index)"
+				/>
+			</div>
+
+			<div class="timer-row">
+				<p class="timer-text">{{ text.resendPrefix }} <span>{{ formattedTimer }}</span></p>
+				<button
+					type="button"
+					class="resend-btn"
+					[disabled]="!canResendOtp || resendInProgress"
+					(click)="onResendOtp()"
+				>
+					{{ resendInProgress ? text.resendingButton : text.resendButton }}
+				</button>
+			</div>
+
+			<div class="resend-status" *ngIf="resendStatusMessage">{{ resendStatusMessage }}</div>
+			<div class="resend-status" *ngIf="verifySuccessMessage">{{ verifySuccessMessage }}</div>
+			<div class="error submit-error" *ngIf="backendError">{{ backendError }}</div>
+
+			<div class="error submit-error" *ngIf="submitted && otpForm.invalid">
+				{{ text.otpInvalidError }}
+			</div>
+
+			<button type="submit" [disabled]="verifyInProgress">
+				{{ verifyInProgress ? text.verifyingButton : text.verifyButton }}
+			</button>
+
+			<hr class="divider" />
+
+			<div class="alt-action">
+				{{ text.wrongContactPrompt }} {{ contactTypeLabel }}?
+				<a routerLink="/sign-up" class="otp-link">{{ text.wrongContactLink }}</a>
+			</div>
+		</form>
+	</div>
+</div>

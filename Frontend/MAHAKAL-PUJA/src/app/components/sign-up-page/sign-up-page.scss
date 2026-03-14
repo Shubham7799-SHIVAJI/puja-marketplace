@@ -1,0 +1,241 @@
+.RAM{
+    background: linear-gradient(
+    45deg,
+    #833AB4,
+    #E1306C,
+    #F56040
+  );
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding: 2.5rem 1.25rem;
+
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.RAM::before,
+.RAM::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.RAM::before {
+  inset: 12px;
+  border: 2px solid rgba(123, 24, 78, 0.22);
+  border-radius: 32px;
+  box-shadow:
+    inset 0 0 0 10px rgba(255, 233, 242, 0.24),
+    inset 0 0 0 18px rgba(255, 159, 197, 0.1);
+  background:
+    radial-gradient(circle at 30px 30px, rgba(255, 233, 242, 0.96) 0 12px, transparent 12px),
+    radial-gradient(circle at 60px 30px, rgba(255, 114, 171, 0.58) 0 7px, transparent 7px),
+    radial-gradient(circle at 45px 52px, rgba(190, 44, 112, 0.38) 0 5px, transparent 5px),
+    radial-gradient(circle at calc(100% - 30px) 30px, rgba(255, 233, 242, 0.96) 0 12px, transparent 12px),
+    radial-gradient(circle at calc(100% - 60px) 30px, rgba(255, 114, 171, 0.58) 0 7px, transparent 7px),
+    radial-gradient(circle at calc(100% - 45px) 52px, rgba(190, 44, 112, 0.38) 0 5px, transparent 5px),
+    radial-gradient(circle at 30px calc(100% - 30px), rgba(255, 233, 242, 0.96) 0 12px, transparent 12px),
+    radial-gradient(circle at 60px calc(100% - 30px), rgba(255, 114, 171, 0.58) 0 7px, transparent 7px),
+    radial-gradient(circle at 45px calc(100% - 52px), rgba(190, 44, 112, 0.38) 0 5px, transparent 5px),
+    radial-gradient(circle at calc(100% - 30px) calc(100% - 30px), rgba(255, 233, 242, 0.96) 0 12px, transparent 12px),
+    radial-gradient(circle at calc(100% - 60px) calc(100% - 30px), rgba(255, 114, 171, 0.58) 0 7px, transparent 7px),
+    radial-gradient(circle at calc(100% - 45px) calc(100% - 52px), rgba(190, 44, 112, 0.38) 0 5px, transparent 5px),
+    radial-gradient(circle at 12% 0, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 22% 0, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 32% 0, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 42% 0, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 52% 0, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 62% 0, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 72% 0, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 82% 0, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 12% 100%, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 22% 100%, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 32% 100%, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 42% 100%, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 52% 100%, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 62% 100%, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 72% 100%, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 82% 100%, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 0 18%, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 0 30%, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 0 42%, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 0 54%, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 0 66%, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 0 78%, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 100% 18%, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 100% 30%, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 100% 42%, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 100% 54%, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px),
+    radial-gradient(circle at 100% 66%, rgba(255, 239, 245, 0.96) 0 11px, transparent 11px),
+    radial-gradient(circle at 100% 78%, rgba(230, 76, 148, 0.48) 0 6px, transparent 6px);
+  background-repeat: no-repeat;
+  opacity: 0.95;
+}
+
+.RAM::after {
+  inset: 0;
+  background:
+    radial-gradient(circle at 0 0, rgba(255, 237, 244, 0.9) 0 56px, transparent 56px),
+    radial-gradient(circle at 100% 0, rgba(255, 237, 244, 0.9) 0 56px, transparent 56px),
+    radial-gradient(circle at 0 100%, rgba(255, 237, 244, 0.9) 0 56px, transparent 56px),
+    radial-gradient(circle at 100% 100%, rgba(255, 237, 244, 0.9) 0 56px, transparent 56px);
+  opacity: 0.42;
+}
+
+.login-container {
+  max-width: 450px;
+  width: 100%;
+  margin: 2rem auto;
+  padding: 0.5rem 1rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fafafa;
+  position: relative;
+  z-index: 1;
+}
+
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 5px;
+}
+
+.logo {
+  max-width: 300px;
+  height: auto;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+  font-size: 18px;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  text-align: center;
+}
+
+.form-group input {
+  padding: 0.5rem;
+  font-size: 14px;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  border: 1px solid black;
+  border-radius: 50px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  text-align: center;
+}
+
+.form-group input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 5px rgba(0,123,255,0.4);
+  transform: scale(1.02);
+}
+
+.form-group input:focus {
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.2);
+}
+
+.contact-input {
+  display: flex;
+}
+
+.contact-input select {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+button[type='submit'] {
+  width: 100%;
+  padding: 0.75rem;
+  font-size: 1rem;
+  background: black !important;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button[type='submit']:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.alt-action .sign-in-link {
+  color: #80868b;
+  text-decoration: none;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+button[type='submit']:hover {
+  background: #0056b3;
+}
+
+.error {
+  color: #d9534f;
+  font-size: 1rem;
+  margin-top: 0.25rem;
+  font-weight: 600;
+  font-family: 'Amazon Ember', Arial, sans-serif;
+  display: block;
+  min-height: 1.2rem;
+  line-height: 1.2rem;
+}
+
+.submit-error {
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+}
+
+.name-error {
+  color: #d9534f !important;
+}
+
+.form-group input.ng-invalid.ng-touched,
+.form-group input.ng-invalid.ng-dirty {
+  border-color: #d9534f;
+}
+
+.hint {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.divider {
+  border: 0;
+  height: 1px;
+  background: #80868b;
+  margin: 1rem 0;
+}
+
+.alt-action {
+  text-align: center;
+  font-size: 14px;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  color: #80868b;
+  font-weight: 500;
+}
+
+.alt-action .sign-in-link {
+  color: #80868b;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+.alt-action .sign-in-link:hover {
+  text-decoration: underline;
+}

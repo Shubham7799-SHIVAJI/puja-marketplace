@@ -1,8 +1,19 @@
 import { Routes } from '@angular/router';
-import { LoginPage } from './components/login-page/login-page';
+import { SignUpPage } from './components/sign-up-page/sign-up-page';
+import { OtpPage } from './components/otp-page/otp-page';
 import { SignInPage } from './components/sign-in-page/sign-in-page';
+import { PasswordPage } from './components/password-page/password-page';
+import { HomePage } from './components/home-page/home-page';
+import { setPasswordGuard } from './shared/guards/set-password.guard';
 
 export const routes: Routes = [
-  { path: '', component: LoginPage },
-  { path: 'sign-in', component: SignInPage }
+  { path: '', component: SignUpPage },
+  { path: 'sign-up', component: SignUpPage },
+  { path: 'signin', component: SignInPage },
+  { path: 'sign-in', redirectTo: 'signin', pathMatch: 'full' },
+  { path: 'otp', component: OtpPage },
+  { path: 'set-password', component: PasswordPage, canActivate: [setPasswordGuard] },
+  { path: 'password-page', redirectTo: 'set-password', pathMatch: 'full' },
+  { path: 'home', component: HomePage },
+  { path: '**', redirectTo: 'sign-up' },
 ];
