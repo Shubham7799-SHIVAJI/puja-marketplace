@@ -4,7 +4,6 @@ import { OtpPage } from './components/otp-page/otp-page';
 import { SignInPage } from './components/sign-in-page/sign-in-page';
 import { PasswordPage } from './components/password-page/password-page';
 import { HomePage } from './components/home-page/home-page';
-import { ShopDashboard } from './components/shop-dashboard/shop-dashboard';
 import { ShopRegistration } from './components/shop-registration/shop-registration';
 import { setPasswordGuard } from './shared/guards/set-password.guard';
 
@@ -17,7 +16,38 @@ export const routes: Routes = [
   { path: 'set-password', component: PasswordPage, canActivate: [setPasswordGuard] },
   { path: 'password-page', redirectTo: 'set-password', pathMatch: 'full' },
   { path: 'shop-registration', component: ShopRegistration },
-  { path: 'shop-dashboard/:registrationId', component: ShopDashboard },
+  {
+    path: 'shop-dashboard/:registrationId',
+    loadComponent: () => import('./components/seller-workspace/seller-workspace').then((m) => m.SellerWorkspace),
+  },
+  {
+    path: 'seller-dashboard/:registrationId',
+    loadComponent: () => import('./components/seller-workspace/seller-workspace').then((m) => m.SellerWorkspace),
+  },
+  {
+    path: 'seller-dashboard',
+    loadComponent: () => import('./components/seller-workspace/seller-workspace').then((m) => m.SellerWorkspace),
+  },
+  {
+    path: 'admin-dashboard',
+    loadComponent: () => import('./components/admin-workspace/admin-workspace').then((m) => m.AdminWorkspace),
+  },
+  {
+    path: 'product/:productId',
+    loadComponent: () => import('./components/product-detail-page/product-detail-page').then((m) => m.ProductDetailPage),
+  },
+  {
+    path: 'wishlist',
+    loadComponent: () => import('./components/wishlist-page/wishlist-page').then((m) => m.WishlistPage),
+  },
+  {
+    path: 'checkout',
+    loadComponent: () => import('./components/checkout-page/checkout-page').then((m) => m.CheckoutPage),
+  },
+  {
+    path: 'orders',
+    loadComponent: () => import('./components/orders-page/orders-page').then((m) => m.OrdersPage),
+  },
   { path: 'home', component: HomePage },
   { path: '**', redirectTo: 'sign-up' },
 ];

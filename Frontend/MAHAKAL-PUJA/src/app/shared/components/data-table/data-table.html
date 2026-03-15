@@ -1,0 +1,61 @@
+<section class="table-card">
+  <header class="table-card__header">
+    <div>
+      <p class="table-card__eyebrow">Operations</p>
+      <h3>{{ title }}</h3>
+      <p>{{ subtitle }}</p>
+    </div>
+    <button type="button" class="table-card__action">Export</button>
+  </header>
+
+  <div class="table-shell">
+    <table>
+      <thead>
+        <tr>
+          <th *ngFor="let column of columns">{{ column.label }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of rows">
+          <td *ngFor="let column of columns">
+            <ng-container [ngSwitch]="column.type || 'text'">
+              <ng-container *ngSwitchCase="'currency'">
+                {{ getCurrencyValue(row, column.key) | currency:'INR':'symbol':'1.0-0' }}
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'date'">
+                {{ getDateValue(row, column.key) | date:'dd MMM, y' }}
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'badge'">
+                <span class="badge" [class]="'badge badge--' + (getBadgeCell(row, column.key)?.tone || 'neutral')">
+                  {{ getBadgeCell(row, column.key)?.label || getCell(row, column.key) }}
+                </span>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'imageText'">
+                <div class="image-text" *ngIf="getImageTextCell(row, column.key) as imageCell">
+                  <img [src]="imageCell.image" [alt]="imageCell.title" />
+                  <div>
+                    <strong>{{ imageCell.title }}</strong>
+                    <small>{{ imageCell.subtitle }}</small>
+                  </div>
+                </div>
+              </ng-container>
+
+              <ng-container *ngSwitchCase="'list'">
+                <div class="pill-list">
+                  <span *ngFor="let item of getListCell(row, column.key)">{{ item }}</span>
+                </div>
+              </ng-container>
+
+              <ng-container *ngSwitchDefault>
+                {{ getCell(row, column.key) }}
+              </ng-container>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

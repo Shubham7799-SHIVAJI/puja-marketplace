@@ -1,0 +1,267 @@
+<section class="admin-shell">
+  <aside class="admin-sidebar" *ngIf="workspace() as vm">
+    <div class="brand-block">
+      <p class="brand-kicker">{{ text.shell.eyebrow }}</p>
+      <h1>{{ text.shell.brandTitle }}</h1>
+      <p>{{ text.shell.description }}</p>
+    </div>
+
+    <nav class="nav-stack" aria-label="Admin navigation">
+      <button
+        *ngFor="let item of vm.navigation; trackBy: trackByNav"
+        type="button"
+        class="nav-item"
+        [class.active]="item.key === activeSection()"
+        (click)="selectSection(item.key)">
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-copy">
+          <strong>{{ item.label }}</strong>
+          <small>{{ item.key | titlecase }}</small>
+        </span>
+        <span *ngIf="item.badge" class="nav-badge">{{ item.badge }}</span>
+      </button>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div>
+        <p class="admin-kicker">{{ text.shell.environment }}</p>
+        <h2>{{ text.shell.title }}</h2>
+        <p>{{ currentSectionText().description }}</p>
+      </div>
+
+      <div class="topbar-actions">
+        <label class="search-chip">
+          <span>{{ text.shell.searchLabel }}</span>
+          <input type="text" [placeholder]="text.shell.searchPlaceholder" />
+        </label>
+
+        <div class="session-chip">
+          <strong>{{ session?.role || 'ADMIN' }}</strong>
+          <small>{{ session?.email || 'secured session' }}</small>
+        </div>
+
+        <button type="button" class="ghost-button" (click)="signOut()">{{ text.shell.signOutLabel }}</button>
+      </div>
+    </header>
+
+    <section *ngIf="loading" class="state-card">
+      <strong>{{ text.shell.refreshLabel }}</strong>
+      <p>{{ text.shell.loadingDescription }}</p>
+    </section>
+
+    <section *ngIf="error && !loading" class="state-card state-card--error">
+      <strong>{{ text.shell.errorTitle }}</strong>
+      <p>{{ error }}</p>
+      <a routerLink="/home">{{ text.shell.returnHomeLabel }}</a>
+    </section>
+
+    <ng-container *ngIf="!loading && !error && workspace() as vm">
+      <section class="hero-panel">
+        <div>
+          <p class="admin-kicker">{{ currentSectionText().headline }}</p>
+          <h3>{{ text.shell.heroTitle }}</h3>
+          <p>{{ text.shell.description }}</p>
+        </div>
+
+        <div class="hero-pills">
+          <span>{{ vm.systemSnapshot.apiStatus }}</span>
+          <span>{{ vm.systemSnapshot.securityMode }}</span>
+          <span>{{ vm.systemSnapshot.uptime }}</span>
+        </div>
+      </section>
+
+      <section class="metrics-grid">
+        <app-metric-card
+          *ngFor="let metric of vm.metrics"
+          [label]="metric.label"
+          [value]="metric.value"
+          [delta]="metric.delta"
+          [tone]="metric.tone"></app-metric-card>
+      </section>
+
+      <ng-container [ngSwitch]="activeSection()">
+        <section *ngSwitchCase="'dashboard'" class="content-stack">
+          <div class="tri-grid">
+            <section class="insight-card">
+              <header>
+                <p>{{ text.cards.approvals }}</p>
+                <h4>{{ text.cards.approvalsTitle }}</h4>
+              </header>
+              <div class="alert-list">
+                <article *ngFor="let alert of vm.approvalAlerts; trackBy: trackByAlert" class="alert-row" [attr.data-tone]="alert.tone">
+                  <div>
+                    <strong>{{ alert.label }}</strong>
+                    <p>{{ alert.detail }}</p>
+                  </div>
+                  <span>{{ alert.value }}</span>
+                </article>
+              </div>
+            </section>
+
+            <section class="insight-card">
+              <header>
+                <p>{{ text.cards.finance }}</p>
+                <h4>{{ text.cards.financeTitle }}</h4>
+              </header>
+              <div class="alert-list">
+                <article *ngFor="let alert of vm.financeAlerts; trackBy: trackByAlert" class="alert-row" [attr.data-tone]="alert.tone">
+                  <div>
+                    <strong>{{ alert.label }}</strong>
+                    <p>{{ alert.detail }}</p>
+                  </div>
+                  <span>{{ alert.value }}</span>
+                </article>
+              </div>
+            </section>
+
+            <section class="insight-card">
+              <header>
+                <p>{{ text.cards.system }}</p>
+                <h4>{{ text.cards.systemTitle }}</h4>
+              </header>
+              <div class="alert-list">
+                <article *ngFor="let alert of vm.systemAlerts; trackBy: trackByAlert" class="alert-row" [attr.data-tone]="alert.tone">
+                  <div>
+                    <strong>{{ alert.label }}</strong>
+                    <p>{{ alert.detail }}</p>
+                  </div>
+                  <span>{{ alert.value }}</span>
+                </article>
+              </div>
+            </section>
+          </div>
+
+          <section class="chart-grid chart-grid--double">
+            <app-analytics-chart [title]="text.charts.salesTrend.title" [subtitle]="text.charts.salesTrend.subtitle" [data]="vm.salesTrend" mode="line"></app-analytics-chart>
+            <app-analytics-chart [title]="text.charts.userGrowth.title" [subtitle]="text.charts.userGrowth.subtitle" [data]="vm.userGrowth" mode="bar"></app-analytics-chart>
+            <app-analytics-chart [title]="text.charts.categoryPerformance.title" [subtitle]="text.charts.categoryPerformance.subtitle" [data]="vm.categoryPerformance" mode="bar"></app-analytics-chart>
+            <app-analytics-chart [title]="text.charts.revenueTrend.title" [subtitle]="text.charts.revenueTrend.subtitle" [data]="vm.revenueTrend" mode="line"></app-analytics-chart>
+          </section>
+
+          <section class="content-grid content-grid--wide">
+            <app-data-table
+              [title]="vm.orderTable.title"
+              [subtitle]="vm.orderTable.subtitle"
+              [columns]="vm.orderTable.columns"
+              [rows]="vm.orderTable.rows"></app-data-table>
+            <app-notifications-panel [notifications]="vm.notifications"></app-notifications-panel>
+          </section>
+        </section>
+
+        <section *ngSwitchCase="'users'" class="content-stack">
+          <app-data-table [title]="vm.userTable.title" [subtitle]="vm.userTable.subtitle" [columns]="vm.userTable.columns" [rows]="vm.userTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'sellers'" class="content-stack">
+          <app-data-table [title]="vm.sellerTable.title" [subtitle]="vm.sellerTable.subtitle" [columns]="vm.sellerTable.columns" [rows]="vm.sellerTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'products'" class="content-stack">
+          <app-data-table [title]="vm.productTable.title" [subtitle]="vm.productTable.subtitle" [columns]="vm.productTable.columns" [rows]="vm.productTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'orders'" class="content-stack">
+          <app-data-table [title]="vm.orderTable.title" [subtitle]="vm.orderTable.subtitle" [columns]="vm.orderTable.columns" [rows]="vm.orderTable.rows"></app-data-table>
+          <app-data-table [title]="vm.supportTable.title" [subtitle]="vm.supportTable.subtitle" [columns]="vm.supportTable.columns" [rows]="vm.supportTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'finance'" class="content-stack">
+          <app-data-table [title]="vm.paymentTable.title" [subtitle]="vm.paymentTable.subtitle" [columns]="vm.paymentTable.columns" [rows]="vm.paymentTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'logistics'" class="content-stack">
+          <app-data-table [title]="vm.logisticsTable.title" [subtitle]="vm.logisticsTable.subtitle" [columns]="vm.logisticsTable.columns" [rows]="vm.logisticsTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'reviews'" class="content-stack">
+          <app-data-table [title]="vm.reviewTable.title" [subtitle]="vm.reviewTable.subtitle" [columns]="vm.reviewTable.columns" [rows]="vm.reviewTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'promotions'" class="content-stack">
+          <app-data-table [title]="vm.promotionTable.title" [subtitle]="vm.promotionTable.subtitle" [columns]="vm.promotionTable.columns" [rows]="vm.promotionTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'analytics'" class="content-stack">
+          <section class="chart-grid chart-grid--double">
+            <app-analytics-chart [title]="text.charts.salesTrend.title" [subtitle]="text.charts.salesTrend.analyticsSubtitle" [data]="vm.salesTrend" mode="line"></app-analytics-chart>
+            <app-analytics-chart [title]="text.charts.userGrowth.title" [subtitle]="text.charts.userGrowth.analyticsSubtitle" [data]="vm.userGrowth" mode="bar"></app-analytics-chart>
+            <app-analytics-chart [title]="text.charts.categoryPerformance.title" [subtitle]="text.charts.categoryPerformance.analyticsSubtitle" [data]="vm.categoryPerformance" mode="bar"></app-analytics-chart>
+            <app-analytics-chart [title]="text.charts.revenueTrend.title" [subtitle]="text.charts.revenueTrend.analyticsSubtitle" [data]="vm.revenueTrend" mode="line"></app-analytics-chart>
+          </section>
+        </section>
+
+        <section *ngSwitchCase="'categories'" class="content-stack">
+          <app-data-table [title]="vm.categoryTable.title" [subtitle]="vm.categoryTable.subtitle" [columns]="vm.categoryTable.columns" [rows]="vm.categoryTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'notifications'" class="content-grid content-grid--wide">
+          <app-notifications-panel [notifications]="vm.notifications"></app-notifications-panel>
+          <section class="insight-card">
+            <header>
+              <p>{{ text.cards.broadcast }}</p>
+              <h4>{{ text.cards.broadcastTitle }}</h4>
+            </header>
+            <p class="body-copy">{{ text.cards.broadcastDescription }}</p>
+          </section>
+        </section>
+
+        <section *ngSwitchCase="'content'" class="content-stack">
+          <app-data-table [title]="vm.contentTable.title" [subtitle]="vm.contentTable.subtitle" [columns]="vm.contentTable.columns" [rows]="vm.contentTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'support'" class="content-stack">
+          <app-data-table [title]="vm.supportTable.title" [subtitle]="vm.supportTable.subtitle" [columns]="vm.supportTable.columns" [rows]="vm.supportTable.rows"></app-data-table>
+          <app-data-table [title]="vm.activityTable.title" [subtitle]="vm.activityTable.subtitle" [columns]="vm.activityTable.columns" [rows]="vm.activityTable.rows"></app-data-table>
+        </section>
+
+        <section *ngSwitchCase="'system'" class="content-stack">
+          <div class="snapshot-grid">
+            <article class="snapshot-card">
+              <span>{{ text.systemSnapshot.apiStatus }}</span>
+              <strong>{{ vm.systemSnapshot.apiStatus }}</strong>
+            </article>
+            <article class="snapshot-card">
+              <span>{{ text.systemSnapshot.uptime }}</span>
+              <strong>{{ vm.systemSnapshot.uptime }}</strong>
+            </article>
+            <article class="snapshot-card">
+              <span>{{ text.systemSnapshot.heapUsage }}</span>
+              <strong>{{ vm.systemSnapshot.heapUsage }}</strong>
+            </article>
+            <article class="snapshot-card">
+              <span>{{ text.systemSnapshot.activeUsers }}</span>
+              <strong>{{ vm.systemSnapshot.activeUsers }}</strong>
+            </article>
+            <article class="snapshot-card snapshot-card--wide">
+              <span>{{ text.systemSnapshot.databaseLoad }}</span>
+              <strong>{{ vm.systemSnapshot.databaseLoad }}</strong>
+            </article>
+            <article class="snapshot-card snapshot-card--wide">
+              <span>{{ text.systemSnapshot.securityMode }}</span>
+              <strong>{{ vm.systemSnapshot.securityMode }}</strong>
+            </article>
+          </div>
+
+          <section class="role-card">
+            <header>
+              <p>{{ text.cards.roles }}</p>
+              <h4>{{ text.cards.rolesTitle }}</h4>
+            </header>
+            <dl>
+              <div><dt>{{ text.roles.superAdmin }}</dt><dd>{{ vm.roleSummary.superAdmin }}</dd></div>
+              <div><dt>{{ text.roles.financeAdmin }}</dt><dd>{{ vm.roleSummary.financeAdmin }}</dd></div>
+              <div><dt>{{ text.roles.productAdmin }}</dt><dd>{{ vm.roleSummary.productAdmin }}</dd></div>
+              <div><dt>{{ text.roles.sellerAdmin }}</dt><dd>{{ vm.roleSummary.sellerAdmin }}</dd></div>
+              <div><dt>{{ text.roles.supportAdmin }}</dt><dd>{{ vm.roleSummary.supportAdmin }}</dd></div>
+              <div><dt>{{ text.roles.twoFactor }}</dt><dd>{{ vm.roleSummary.twoFactorMode }}</dd></div>
+            </dl>
+          </section>
+
+          <app-data-table [title]="vm.activityTable.title" [subtitle]="vm.activityTable.subtitle" [columns]="vm.activityTable.columns" [rows]="vm.activityTable.rows"></app-data-table>
+        </section>
+      </ng-container>
+    </ng-container>
+  </main>
+</section>

@@ -1,4 +1,13 @@
-<app-header></app-header>
-<main class="app-content">
+@if (!usesSellerLayout()) {
+  @if (usesAuthLayout()) {
+    <!-- Auth header: black social strip + logo — shown on signin/signup/otp/shop-registration -->
+    <app-auth-header></app-auth-header>
+  } @else {
+    <!-- Marketplace header: full navbar with search/cart — shown on home & marketplace pages -->
+    <app-header></app-header>
+  }
+}
+
+<main class="app-content" [class.app-content--seller]="usesSellerLayout()" [class.app-content--auth]="usesAuthLayout()">
 	<router-outlet></router-outlet>
 </main>

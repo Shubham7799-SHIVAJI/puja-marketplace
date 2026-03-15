@@ -1,0 +1,32 @@
+.seller-form-field {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.seller-form-field__label {
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: #21364f;
+}
+
+.seller-form-field__hint {
+  font-size: 0.8rem;
+  color: #6d7d90;
+}
+
+.seller-form-field :where(input, textarea, select) {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 0.95rem;
+  border: 1px solid rgba(16, 39, 64, 0.12);
+  background: #fff;
+  padding: 0.9rem 1rem;
+  font: inherit;
+  color: #12243a;
+  resize: vertical;
+}
+
+.seller-form-field :where(input, textarea, select):focus {
+  outline: 2px solid rgba(14, 116, 144, 0.18);
+  border-color: #0e7490;
+}

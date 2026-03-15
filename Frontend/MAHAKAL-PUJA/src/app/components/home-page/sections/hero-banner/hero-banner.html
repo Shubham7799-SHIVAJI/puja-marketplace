@@ -1,0 +1,52 @@
+<section class="hero-carousel">
+  <div class="slides-track" [style.transform]="'translateX(-' + activeIndex() * 100 + '%)'">
+    @for (slide of slides(); track slide.id) {
+      <div class="slide" [style.background]="slide.bgGradient">
+        <div class="slide-glow" [style.background]="'radial-gradient(circle at 60% 50%, ' + slide.accentColor + '44 0%, transparent 60%)'"></div>
+        <div class="slide-content">
+          <span class="slide-badge">{{ slide.badge }}</span>
+          <div class="slide-icon">{{ slide.icon }}</div>
+          <h1 class="slide-title">{{ slide.title }}</h1>
+          <p class="slide-subtitle">{{ slide.subtitle }}</p>
+          <div class="slide-pricing">
+            <span class="slide-price">₹{{ slide.price }}</span>
+            <span class="slide-original">₹{{ slide.originalPrice }}</span>
+            <span class="slide-discount">{{ slide.discount }}% OFF</span>
+          </div>
+          <div class="slide-actions">
+            <button class="btn-primary" type="button">Shop Now</button>
+            <button class="btn-secondary" type="button">View Kit Details</button>
+          </div>
+        </div>
+        <div class="slide-deco">
+          <div class="mandala-ring"></div>
+          <div class="mandala-ring mandala-ring--2"></div>
+          <div class="mandala-ring mandala-ring--3"></div>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (slides().length > 1) {
+    <button class="carousel-btn carousel-btn--prev" type="button" (click)="prev()" aria-label="Previous slide">❮</button>
+    <button class="carousel-btn carousel-btn--next" type="button" (click)="next()" aria-label="Next slide">❯</button>
+
+    <div class="carousel-dots">
+      @for (slide of slides(); track slide.id; let i = $index) {
+        <button
+          class="dot"
+          [class.dot--active]="i === activeIndex()"
+          type="button"
+          (click)="goTo(i)"
+          [attr.aria-label]="'Go to slide ' + (i + 1)"
+        ></button>
+      }
+    </div>
+  }
+
+  <div class="hero-wave">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 60" preserveAspectRatio="none">
+      <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,30 1440,40 L1440,60 L0,60 Z" fill="#FFF8F0" />
+    </svg>
+  </div>
+</section>

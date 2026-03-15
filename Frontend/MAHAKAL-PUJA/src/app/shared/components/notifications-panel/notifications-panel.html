@@ -1,0 +1,16 @@
+<aside class="notifications-card">
+  <header>
+    <p class="notifications-card__eyebrow">Notifications</p>
+    <h3>Seller activity feed</h3>
+  </header>
+
+  <div class="notification-list">
+    <article class="notification-item" *ngFor="let notification of notifications" [class]="'notification-item notification-item--' + notification.tone">
+      <div>
+        <strong>{{ notification.title }}</strong>
+        <p>{{ notification.detail }}</p>
+      </div>
+      <span>{{ notification.time }}</span>
+    </article>
+  </div>
+</aside>

@@ -4,8 +4,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.temporal.ChronoUnit;
 import java.time.LocalDateTime;
 import java.util.HexFormat;
+import java.util.UUID;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -26,12 +28,16 @@ import com.SHIVA.puja.dto.ResendOtpRequest;
 import com.SHIVA.puja.dto.SetPasswordRequest;
 import com.SHIVA.puja.dto.SignInRequest;
 import com.SHIVA.puja.dto.VerifyOtpRequest;
+import com.SHIVA.puja.dto.AuthTokenResponse;
 import com.SHIVA.puja.entity.OtpPurpose;
 import com.SHIVA.puja.entity.OtpRequest;
+import com.SHIVA.puja.entity.RefreshToken;
 import com.SHIVA.puja.entity.User;
 import com.SHIVA.puja.exception.ApiException;
 import com.SHIVA.puja.repository.OtpRequestRepository;
+import com.SHIVA.puja.repository.RefreshTokenRepository;
 import com.SHIVA.puja.repository.UserRepository;
+import com.SHIVA.puja.security.JwtService;
 import com.SHIVA.puja.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,7 +50,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final OtpRequestRepository otpRequestRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JavaMailSender mailSender;
+    private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final SecureRandom secureRandom = new SecureRandom();
 
@@ -60,14 +68,24 @@ public class UserServiceImpl implements UserService {
     @Value("${app.mail.subject:Puja Marketplace Login OTP}")
     private String otpMailSubject;
 
+    @Value("${app.security.jwt-expiration-minutes:720}")
+    private long jwtExpirationMinutes;
+
+    @Value("${app.security.refresh-expiration-days:30}")
+    private long refreshExpirationDays;
+
     public UserServiceImpl(
             UserRepository userRepository,
             OtpRequestRepository otpRequestRepository,
-            JavaMailSender mailSender
+            RefreshTokenRepository refreshTokenRepository,
+            JavaMailSender mailSender,
+            JwtService jwtService
     ) {
         this.userRepository = userRepository;
         this.otpRequestRepository = otpRequestRepository;
+        this.refreshTokenRepository = refreshTokenRepository;
         this.mailSender = mailSender;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -194,7 +212,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void signIn(SignInRequest request) {
+    public AuthTokenResponse signIn(SignInRequest request) {
         String email = normalize(request.getContact());
         String password = normalize(request.getPassword());
 
@@ -216,6 +234,85 @@ public class UserServiceImpl implements UserService {
         user.setLastLoginAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
+
+        return issueAuthTokens(user, "Sign-in successful");
+    }
+
+    @Override
+    @Transactional
+    public AuthTokenResponse refreshAccessToken(String refreshToken) {
+        String normalizedToken = normalize(refreshToken);
+        if (normalizedToken == null) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "Refresh token is required.");
+        }
+
+        RefreshToken persistedToken = refreshTokenRepository.findByTokenHash(hashValue(normalizedToken, "REFRESH_TOKEN_HASHING_FAILED", "Failed to process refresh token."))
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_REFRESH_TOKEN", "Refresh token is invalid."));
+
+        if (persistedToken.getRevokedAt() != null || persistedToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_REFRESH_TOKEN", "Refresh token is expired or revoked.");
+        }
+
+        User user = userRepository.findById(persistedToken.getUserId())
+                .orElseThrow(() -> new ApiException(HttpStatus.UNAUTHORIZED, "USER_NOT_FOUND", "User not found for refresh token."));
+
+        persistedToken.setRevokedAt(LocalDateTime.now());
+        refreshTokenRepository.save(persistedToken);
+        return issueAuthTokens(user, "Token refreshed successfully");
+    }
+
+    @Override
+    @Transactional
+    public void revokeRefreshToken(String refreshToken) {
+        String normalizedToken = normalize(refreshToken);
+        if (normalizedToken == null) {
+            return;
+        }
+
+        refreshTokenRepository.findByTokenHash(hashValue(normalizedToken, "REFRESH_TOKEN_HASHING_FAILED", "Failed to process refresh token."))
+                .ifPresent(token -> {
+                    token.setRevokedAt(LocalDateTime.now());
+                    refreshTokenRepository.save(token);
+                });
+    }
+
+    private AuthTokenResponse issueAuthTokens(User user, String message) {
+        revokeActiveRefreshTokens(user.getId());
+
+        String token = jwtService.generateToken(
+            org.springframework.security.core.userdetails.User.withUsername(user.getEmail())
+                .password(user.getPasswordHash())
+                .authorities("ROLE_" + user.getRole())
+                .build(),
+            java.util.Map.of("role", user.getRole()));
+
+        String refreshTokenValue = UUID.randomUUID() + "." + generateOtp() + '.' + System.currentTimeMillis();
+        RefreshToken refreshToken = new RefreshToken();
+        refreshToken.setUserId(user.getId());
+        refreshToken.setTokenHash(hashValue(refreshTokenValue, "REFRESH_TOKEN_HASHING_FAILED", "Failed to process refresh token."));
+        refreshToken.setCreatedAt(LocalDateTime.now());
+        refreshToken.setExpiresAt(LocalDateTime.now().plus(refreshExpirationDays, ChronoUnit.DAYS));
+        refreshToken.setRevokedAt(null);
+        refreshTokenRepository.save(refreshToken);
+
+        return AuthTokenResponse.builder()
+            .token(token)
+            .refreshToken(refreshTokenValue)
+            .email(user.getEmail())
+            .role(user.getRole())
+            .expiresInMinutes(jwtExpirationMinutes)
+            .refreshExpiresInDays(refreshExpirationDays)
+            .message(message)
+            .build();
+    }
+
+    private void revokeActiveRefreshTokens(Long userId) {
+        refreshTokenRepository.findByUserIdAndRevokedAtIsNull(userId).forEach(token -> {
+            if (token.getRevokedAt() == null) {
+                token.setRevokedAt(LocalDateTime.now());
+                refreshTokenRepository.save(token);
+            }
+        });
     }
 
     private void issueOtp(String recipientEmail, String fullName) {
@@ -301,17 +398,21 @@ public class UserServiceImpl implements UserService {
     }
 
     private String hashOtp(String otp) {
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            byte[] digest = messageDigest.digest(otp.getBytes(StandardCharsets.UTF_8));
-            return HexFormat.of().formatHex(digest);
-        } catch (NoSuchAlgorithmException exception) {
-            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "OTP_HASHING_FAILED", "Failed to process OTP.");
-        }
+        return hashValue(otp, "OTP_HASHING_FAILED", "Failed to process OTP.");
     }
 
     private boolean matchesOtp(String otp, String otpHash) {
         return hashOtp(otp).equals(otpHash);
+    }
+
+    private String hashValue(String value, String code, String message) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+            byte[] digest = messageDigest.digest(value.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(digest);
+        } catch (NoSuchAlgorithmException exception) {
+            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, code, message);
+        }
     }
 
     private String normalize(String value) {

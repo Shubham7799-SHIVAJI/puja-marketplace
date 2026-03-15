@@ -1,0 +1,85 @@
+<section class="checkout-shell">
+  <header>
+    <p class="eyebrow">{{ text.title }}</p>
+    <h1>{{ text.subtitle }}</h1>
+  </header>
+
+  <section *ngIf="cartService.items().length > 0; else emptyState" class="checkout-grid">
+    <div class="card">
+      <p class="section-kicker">{{ text.addressTitle }}</p>
+      <div class="address-list">
+        <label *ngFor="let address of addresses()" class="address-card">
+          <input type="radio" name="address" [value]="address.id" [(ngModel)]="selectedAddressId" />
+          <div>
+            <strong>{{ address.fullName }}</strong>
+            <p>{{ address.addressLine1 }}, {{ address.city }}, {{ address.state }} {{ address.pincode }}</p>
+            <small>{{ address.phoneNumber }}</small>
+          </div>
+          <button type="button" (click)="deleteAddress(address.id)">{{ commonText.remove }}</button>
+        </label>
+      </div>
+
+      <button type="button" class="toggle-button" (click)="showAddressForm = !showAddressForm">
+        {{ showAddressForm ? 'Hide address form' : text.addressFormTitle }}
+      </button>
+
+      <form *ngIf="showAddressForm" class="address-form">
+        <input [(ngModel)]="addressForm.fullName" name="fullName" placeholder="Recipient name" />
+        <input [(ngModel)]="addressForm.phoneNumber" name="phoneNumber" placeholder="Phone number" />
+        <input [(ngModel)]="addressForm.addressLine1" name="addressLine1" placeholder="Address line 1" />
+        <input [(ngModel)]="addressForm.addressLine2" name="addressLine2" placeholder="Address line 2" />
+        <input [(ngModel)]="addressForm.city" name="city" placeholder="City" />
+        <input [(ngModel)]="addressForm.state" name="state" placeholder="State" />
+        <input [(ngModel)]="addressForm.pincode" name="pincode" placeholder="Pincode" />
+        <input [(ngModel)]="addressForm.country" name="country" placeholder="Country" />
+        <input [(ngModel)]="addressForm.landmark" name="landmark" placeholder="Landmark" />
+        <input [(ngModel)]="addressForm.deliveryInstructions" name="deliveryInstructions" placeholder="Delivery instructions" />
+        <label class="checkbox-row">
+          <input type="checkbox" [(ngModel)]="addressForm.defaultAddress" name="defaultAddress" />
+          Set as default address
+        </label>
+        <button type="button" class="primary-button" (click)="saveAddress()">Save address</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <p class="section-kicker">{{ text.orderSummary }}</p>
+      <article *ngFor="let item of cartService.items()" class="summary-row">
+        <div>
+          <strong>{{ item.name }}</strong>
+          <small>{{ item.sellerName }}<span *ngIf="item.variantLabel"> • {{ item.variantLabel }}</span></small>
+        </div>
+        <span>{{ item.quantity }} x Rs {{ item.finalPrice | number: '1.2-2' }}</span>
+      </article>
+
+      <label class="field">
+        <span>Payment method</span>
+        <select [(ngModel)]="paymentMethod" name="paymentMethod">
+          <option *ngFor="let method of paymentMethods" [value]="method.value">{{ method.label }}</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Coupon code</span>
+        <input [(ngModel)]="couponCode" name="couponCode" placeholder="Optional seller coupon" />
+      </label>
+
+      <div class="total-row">
+        <span>Estimated subtotal</span>
+        <strong>Rs {{ estimatedTotal() | number: '1.2-2' }}</strong>
+      </div>
+
+      <button type="button" class="primary-button" [disabled]="placingOrder()" (click)="placeOrder()">
+        {{ placingOrder() ? 'Placing order...' : text.placeOrder }}
+      </button>
+      <p class="success-message" *ngIf="successMessage()">{{ successMessage() }}</p>
+    </div>
+  </section>
+
+  <ng-template #emptyState>
+    <section class="empty-card">
+      <p>{{ text.empty }}</p>
+      <a routerLink="/home">{{ commonText.backToCatalog }}</a>
+    </section>
+  </ng-template>
+</section>

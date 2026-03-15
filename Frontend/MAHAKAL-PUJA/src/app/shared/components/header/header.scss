@@ -1,5 +1,295 @@
-@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
 
+// ─── Spiritual Marketplace Navbar ────────────────────────────────────────────
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, #FFF9F0 0%, #FFF5E6 100%);
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  transition: box-shadow 0.3s;
+  font-family: 'Inter', sans-serif;
+
+  &--scrolled {
+    box-shadow: 0 4px 24px rgba(180, 100, 10, 0.12);
+  }
+}
+
+// Top micro-bar
+.navbar-topbar {
+  background: linear-gradient(135deg, #2C1810, #4A2810);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.72rem;
+  padding: 0.45rem clamp(1rem, 4vw, 3rem);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  letter-spacing: 0.02em;
+
+  @media (max-width: 600px) { justify-content: center; span:last-child { display: none; } }
+}
+
+// Main navbar row
+.navbar-main {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.9rem clamp(1rem, 4vw, 3rem);
+
+  @media (max-width: 900px) { flex-wrap: wrap; gap: 0.75rem; }
+}
+
+// Logo
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.logo-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px rgba(255, 200, 0, 0.4));
+}
+
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2C1810;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+}
+
+.logo-tagline {
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: #D4AF37;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+// Search bar
+.navbar-search {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 2px solid rgba(212, 175, 55, 0.3);
+  border-radius: 999px;
+  overflow: hidden;
+  transition: border-color 0.25s, box-shadow 0.25s;
+  max-width: 650px;
+
+  &:focus-within {
+    border-color: #D4AF37;
+    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.1);
+  }
+
+  @media (max-width: 900px) { order: 10; width: 100%; max-width: 100%; }
+}
+
+.search-icon {
+  padding: 0 0.75rem;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.7rem 0;
+  font-size: 0.9rem;
+  color: #2C1810;
+  outline: none;
+
+  &::placeholder { color: #B09070; }
+}
+
+.search-btn {
+  background: linear-gradient(135deg, #FF6B00, #FFB347);
+  color: #fff;
+  border: none;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+
+  &:hover { opacity: 0.9; }
+}
+
+// Right actions
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  flex-shrink: 0;
+
+  @media (max-width: 780px) {
+    .nav-action--seller { display: none; }
+  }
+}
+
+.nav-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  text-decoration: none;
+  padding: 0.5rem 0.85rem;
+  border-radius: 14px;
+  transition: background 0.2s;
+  position: relative;
+  cursor: pointer;
+
+  &:hover { background: rgba(212, 175, 55, 0.12); }
+
+  .action-icon {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .action-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: #3D2208;
+    white-space: nowrap;
+
+    @media (max-width: 1000px) {
+      display: none;
+    }
+  }
+
+  &--cart {
+    .action-icon { font-size: 1.3rem; }
+  }
+
+  &--seller {
+    background: linear-gradient(135deg, #FF6B00, #FFB347);
+    border-radius: 999px;
+    padding: 0.5rem 1.1rem;
+
+    .action-icon { font-size: 1rem; }
+    .action-label { color: #fff; display: block !important; font-size: 0.72rem; }
+
+    &:hover { opacity: 0.9; background: linear-gradient(135deg, #FF6B00, #FFB347); }
+  }
+}
+
+.cart-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: #FF6B00;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+.mobile-menu-btn {
+  display: none;
+  background: none;
+  border: 1.5px solid rgba(212, 175, 55, 0.4);
+  color: #2C1810;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 580px) { display: flex; }
+}
+
+// Mobile dropdown
+.mobile-menu {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  background: #FFF9F0;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  gap: 0.25rem;
+
+  .mobile-search {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+
+    input {
+      flex: 1;
+      padding: 0.7rem 1rem;
+      border: 1.5px solid rgba(212, 175, 55, 0.3);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    button {
+      background: linear-gradient(135deg, #FF6B00, #FFB347);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  }
+
+  a {
+    display: block;
+    padding: 0.8rem 1rem;
+    text-decoration: none;
+    color: #2C1810;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: background 0.2s;
+
+    &:hover { background: rgba(212, 175, 55, 0.1); }
+  }
+
+  .mobile-seller-link {
+    background: linear-gradient(135deg, #FF6B00, #FFB347);
+    color: #fff;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+}
+
+// ─── Placeholder for old styles below (replaced) ─────────────────────────────
+
+.top-header {
+  display: none; // superseded by .navbar
+}
+
+.social-links,
+.social-link,
+.header-title {
+  display: none;
+}
+
+// Intentionally left empty for backward compat; old rules below are overridden
 .top-header {
 	align-items: center;
 	background-color: rgb(0, 0, 0);

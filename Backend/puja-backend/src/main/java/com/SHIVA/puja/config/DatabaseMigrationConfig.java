@@ -22,9 +22,12 @@ public class DatabaseMigrationConfig {
             populator.setContinueOnError(false);
             populator.addScript(new ClassPathResource("sql/shop-registration-schema.sql"));
             populator.addScript(new ClassPathResource("sql/users-otp-columns.sql"));
+            populator.addScript(new ClassPathResource("sql/seller-dashboard-schema.sql"));
+            populator.addScript(new ClassPathResource("sql/security-and-audit-schema.sql"));
+            populator.addScript(new ClassPathResource("sql/customer-marketplace-schema.sql"));
             populator.execute(dataSource);
 
-            LOGGER.info("Applied startup database migrations for shop registration and OTP schema.");
+            LOGGER.info("Applied startup database migrations for shop registration, OTP, seller dashboard, security schema, and customer marketplace schema.");
         };
     }
 }

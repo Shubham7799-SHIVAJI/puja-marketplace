@@ -1,0 +1,30 @@
+<section class="wishlist-shell">
+  <header>
+    <p class="eyebrow">{{ text.title }}</p>
+    <h1>{{ text.subtitle }}</h1>
+  </header>
+
+  <div *ngIf="items().length > 0; else emptyState" class="wishlist-grid">
+    <article *ngFor="let item of items()" class="wishlist-card">
+      <img [src]="item.product.imageUrl || 'assets/images/LORD_NATRAJ.png'" [alt]="item.product.name" />
+      <div>
+        <p class="category">{{ item.product.categoryName }}</p>
+        <h2>{{ item.product.name }}</h2>
+        <p>{{ item.product.sellerName }}</p>
+        <strong>Rs {{ item.product.finalPrice | number: '1.2-2' }}</strong>
+      </div>
+      <div class="actions">
+        <a [routerLink]="['/product', item.product.id]">View</a>
+        <button type="button" (click)="addToCart(item)">Add to cart</button>
+        <button type="button" (click)="remove(item.product.id)">{{ commonText.remove }}</button>
+      </div>
+    </article>
+  </div>
+
+  <ng-template #emptyState>
+    <section class="empty-card">
+      <p>{{ text.empty }}</p>
+      <a routerLink="/home">{{ commonText.backToCatalog }}</a>
+    </section>
+  </ng-template>
+</section>

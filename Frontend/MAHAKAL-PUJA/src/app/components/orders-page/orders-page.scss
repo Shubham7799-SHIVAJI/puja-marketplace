@@ -1,0 +1,66 @@
+.orders-shell {
+  min-height: 100vh;
+  padding: 2rem clamp(1rem, 4vw, 3rem);
+  background: linear-gradient(180deg, #fffdf6, #eee6da);
+}
+
+.eyebrow,
+.order-code {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.72rem;
+  color: #976824;
+  font-weight: 700;
+}
+
+.orders-grid {
+  margin-top: 1.5rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.order-card,
+.empty-card {
+  border-radius: 26px;
+  padding: 1.4rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 24px 48px rgba(84, 58, 16, 0.08);
+}
+
+.order-card header,
+.meta-row,
+.order-card footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.status-pill,
+.empty-card a {
+  align-self: start;
+  border-radius: 999px;
+  padding: 0.65rem 0.9rem;
+  background: #f7ebd4;
+  color: #6a4618;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.item-list {
+  margin: 1rem 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.item-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem;
+  border-radius: 16px;
+  background: #fff8ec;
+}
+
+.empty-card {
+  text-align: center;
+}

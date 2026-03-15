@@ -1,0 +1,19 @@
+<section class="essentials-section">
+  <div class="section-header">
+    <div class="section-label">Every Day Sacred</div>
+    <h2>Daily Puja Essentials</h2>
+    <p>Start your day with divinity — restock your puja shelf effortlessly</p>
+  </div>
+
+  <div class="essentials-grid">
+    @for (item of essentials(); track item.id) {
+      <article class="essential-card">
+        <div class="essential-icon">{{ item.icon }}</div>
+        <h3 class="essential-name">{{ item.name }}</h3>
+        <p class="essential-desc">{{ item.description }}</p>
+        <div class="essential-price">₹{{ item.price }}</div>
+        <button class="essential-btn" type="button">Quick Add</button>
+      </article>
+    }
+  </div>
+</section>

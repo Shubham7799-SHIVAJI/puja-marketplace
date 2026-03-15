@@ -1,0 +1,56 @@
+<section class="reviews-section">
+  <div class="section-header">
+    <div class="section-label">Devotee Voices</div>
+    <h2>Blessings from Our Customers</h2>
+    <p>Thousands of devotees trust Daily Puja for their sacred rituals</p>
+  </div>
+
+  <div class="reviews-stats">
+    <div class="stat">
+      <span class="stat-number">4.8</span>
+      <div class="stat-stars">★★★★★</div>
+      <span class="stat-label">Average Rating</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-number">10,000+</span>
+      <span class="stat-label">Happy Devotees</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-number">500+</span>
+      <span class="stat-label">Temple Sellers</span>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <span class="stat-number">50+</span>
+      <span class="stat-label">Cities Served</span>
+    </div>
+  </div>
+
+  <div class="reviews-grid">
+    @for (review of reviews(); track review.id) {
+      <article class="review-card">
+        <div class="review-header">
+          <div class="avatar">{{ review.avatar }}</div>
+          <div class="reviewer-info">
+            <strong class="reviewer-name">{{ review.name }}</strong>
+            <span class="reviewer-location">📍 {{ review.location }}</span>
+          </div>
+          @if (review.verified) {
+            <span class="verified-badge">✓ Verified</span>
+          }
+        </div>
+
+        <div class="review-stars">
+          @for (star of getStars(review.rating); track $index) {
+            <span class="star star--full">★</span>
+          }
+        </div>
+
+        <p class="review-text">"{{ review.text }}"</p>
+        <span class="review-date">{{ review.date }}</span>
+      </article>
+    }
+  </div>
+</section>

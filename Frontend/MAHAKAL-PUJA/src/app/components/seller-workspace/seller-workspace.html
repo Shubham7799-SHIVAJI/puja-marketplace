@@ -1,0 +1,465 @@
+<section class="seller-shell" *ngIf="!loading && workspace as vm; else loadingState">
+  <header class="seller-topbar">
+    <div class="seller-topbar__brand">
+      <div class="seller-topbar__logo">SC</div>
+      <div>
+        <p>Seller Central</p>
+        <strong>{{ vm.shopSettings.shopName }}</strong>
+      </div>
+    </div>
+
+    <div class="seller-topbar__search">
+      <input type="search" placeholder="Search products, orders, customers, SKUs" />
+    </div>
+
+    <div class="seller-topbar__actions">
+      <button type="button">Sync Catalog</button>
+      <button type="button" class="seller-topbar__primary">Create Campaign</button>
+      <div class="seller-topbar__profile">
+        <span>{{ vm.shopSettings.logo }}</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="seller-layout">
+    <aside class="seller-sidebar">
+      <nav>
+        <button
+          type="button"
+          *ngFor="let item of vm.navigation; trackBy: trackByNav"
+          [class.is-active]="activeSection === item.key"
+          (click)="selectSection(item.key)">
+          <span class="seller-sidebar__icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+          <small *ngIf="item.badge">{{ item.badge }}</small>
+        </button>
+      </nav>
+
+      <div class="seller-sidebar__footer">
+        <a routerLink="/shop-registration">Back to registration</a>
+        <button type="button">Logout</button>
+      </div>
+    </aside>
+
+    <main class="seller-main">
+      <section class="seller-hero">
+        <div>
+          <p class="seller-kicker">Enterprise seller workspace</p>
+          <h1>{{ vm.shopSettings.shopName }}</h1>
+          <p>
+            Multi-vendor operations hub inspired by Amazon Seller Central with product, inventory,
+            orders, payments, analytics, and support workflows in one responsive workspace.
+          </p>
+        </div>
+
+        <div class="seller-hero__meta">
+          <div>
+            <span>Owner</span>
+            <strong>{{ registration?.ownerFullName || 'Seller Admin' }}</strong>
+          </div>
+          <div>
+            <span>GST</span>
+            <strong>{{ vm.shopSettings.gstNumber }}</strong>
+          </div>
+          <div>
+            <span>Payout Bank</span>
+            <strong>{{ vm.shopSettings.bankAccount }}</strong>
+          </div>
+        </div>
+      </section>
+
+      <ng-container [ngSwitch]="activeSection">
+        <section class="content-grid" *ngSwitchCase="'dashboard'">
+          <div class="metric-grid">
+            <app-metric-card
+              *ngFor="let metric of vm.metrics"
+              [label]="metric.label"
+              [value]="metric.value"
+              [delta]="metric.delta"
+              [tone]="metric.tone"></app-metric-card>
+          </div>
+
+          <div class="overview-grid">
+            <app-analytics-chart
+              title="Revenue Graph"
+              subtitle="Daily revenue trend across the current week."
+              [data]="vm.revenueTrend"
+              mode="line"></app-analytics-chart>
+
+            <app-notifications-panel [notifications]="vm.notifications"></app-notifications-panel>
+
+            <app-analytics-chart
+              title="Sales by Category"
+              subtitle="Category contribution based on gross merchandise value."
+              [data]="vm.categoryPerformance"
+              mode="bar"></app-analytics-chart>
+
+            <section class="alert-card">
+              <header>
+                <p class="seller-kicker">Inventory radar</p>
+                <h3>Low stock alerts</h3>
+              </header>
+              <article *ngFor="let alert of vm.lowStockAlerts; trackBy: trackByAlert" [class]="'alert-item alert-item--' + alert.tone">
+                <strong>{{ alert.label }} · {{ alert.value }}</strong>
+                <p>{{ alert.detail }}</p>
+              </article>
+            </section>
+          </div>
+
+          <app-data-table
+            [title]="vm.recentOrders.title"
+            [subtitle]="vm.recentOrders.subtitle"
+            [columns]="vm.recentOrders.columns"
+            [rows]="vm.recentOrders.rows"></app-data-table>
+
+          <app-data-table
+            [title]="vm.topProducts.title"
+            [subtitle]="vm.topProducts.subtitle"
+            [columns]="vm.topProducts.columns"
+            [rows]="vm.topProducts.rows"></app-data-table>
+        </section>
+
+        <section class="content-stack" *ngSwitchCase="'products'">
+          <app-data-table
+            [title]="vm.productTable.title"
+            [subtitle]="vm.productTable.subtitle"
+            [columns]="vm.productTable.columns"
+            [rows]="vm.productTable.rows"></app-data-table>
+        </section>
+
+        <section class="content-grid form-grid" *ngSwitchCase="'add-product'">
+          <section class="form-card form-card--wide">
+            <header>
+              <p class="seller-kicker">Catalog</p>
+              <h3>Add Product</h3>
+              <p>Enterprise product creation with variants, pricing, dimensions, and secure uploads.</p>
+            </header>
+
+            <div class="form-layout">
+              <app-seller-form-field label="Product Name" hint="Visible title for the marketplace listing.">
+                <input type="text" value="Festival Puja Kit Signature" />
+              </app-seller-form-field>
+
+              <app-seller-form-field label="SKU" hint="Unique catalog SKU for internal operations.">
+                <input type="text" value="FPK-SIG-001" />
+              </app-seller-form-field>
+
+              <app-seller-form-field label="Category" hint="Used for category analytics and merchandising.">
+                <select>
+                  <option>Puja Kits</option>
+                  <option>Decor</option>
+                  <option>Dhoop</option>
+                </select>
+              </app-seller-form-field>
+
+              <app-seller-form-field label="Price" hint="Base selling price before discount.">
+                <input type="text" value="1299" />
+              </app-seller-form-field>
+
+              <app-seller-form-field label="Discount" hint="Percentage or flat promotional markdown.">
+                <input type="text" value="15%" />
+              </app-seller-form-field>
+
+              <app-seller-form-field label="Variants" hint="Size, color, and bundle structure.">
+                <input type="text" value="Standard, Deluxe, Festival Gold" />
+              </app-seller-form-field>
+
+              <app-seller-form-field label="Weight & Dimensions" hint="Required for shipping label generation.">
+                <input type="text" value="1.2 kg • 28 x 18 x 8 cm" />
+              </app-seller-form-field>
+
+              <app-seller-form-field label="Product Status" hint="Enable or disable listing visibility.">
+                <select>
+                  <option>Enabled</option>
+                  <option>Disabled</option>
+                </select>
+              </app-seller-form-field>
+
+              <app-seller-form-field label="Description" hint="SEO-ready enterprise product description.">
+                <textarea rows="5">Curated puja kit with brass diya, incense, kumkum, and festive offerings for premium devotional occasions.</textarea>
+              </app-seller-form-field>
+            </div>
+
+            <div class="upload-zone">
+              <div>
+                <strong>Multiple image upload</strong>
+                <p>Drag and drop hero images, detail shots, and packaging views. Secure server-side validation applies.</p>
+              </div>
+              <button type="button">Upload Images</button>
+            </div>
+
+            <div class="form-actions">
+              <button type="button">Bulk Upload CSV</button>
+              <button type="button" class="primary">Save Product</button>
+            </div>
+          </section>
+        </section>
+
+        <section class="content-stack" *ngSwitchCase="'inventory'">
+          <app-data-table
+            [title]="vm.inventoryTable.title"
+            [subtitle]="vm.inventoryTable.subtitle"
+            [columns]="vm.inventoryTable.columns"
+            [rows]="vm.inventoryTable.rows"></app-data-table>
+        </section>
+
+        <section class="content-stack" *ngSwitchCase="'orders'">
+          <app-data-table
+            [title]="vm.orderTable.title"
+            [subtitle]="vm.orderTable.subtitle"
+            [columns]="vm.orderTable.columns"
+            [rows]="vm.orderTable.rows"></app-data-table>
+
+          <section class="workflow-card">
+            <p class="seller-kicker">Order workflow</p>
+            <div class="workflow-steps">
+              <span>Pending</span>
+              <span>Accepted</span>
+              <span>Processing</span>
+              <span>Packed</span>
+              <span>Shipped</span>
+              <span>Out for Delivery</span>
+              <span>Delivered</span>
+              <span>Cancelled</span>
+              <span>Returned</span>
+              <span>Refunded</span>
+            </div>
+          </section>
+        </section>
+
+        <section class="content-stack" *ngSwitchCase="'customers'">
+          <app-data-table
+            [title]="vm.customerTable.title"
+            [subtitle]="vm.customerTable.subtitle"
+            [columns]="vm.customerTable.columns"
+            [rows]="vm.customerTable.rows"></app-data-table>
+        </section>
+
+        <section class="content-stack" *ngSwitchCase="'reviews'">
+          <app-data-table
+            [title]="vm.reviewTable.title"
+            [subtitle]="vm.reviewTable.subtitle"
+            [columns]="vm.reviewTable.columns"
+            [rows]="vm.reviewTable.rows"></app-data-table>
+        </section>
+
+        <section class="content-grid form-grid" *ngSwitchCase="'promotions'">
+          <app-data-table
+            [title]="vm.promotionsTable.title"
+            [subtitle]="vm.promotionsTable.subtitle"
+            [columns]="vm.promotionsTable.columns"
+            [rows]="vm.promotionsTable.rows"></app-data-table>
+
+          <section class="form-card">
+            <header>
+              <p class="seller-kicker">Campaign builder</p>
+              <h3>Create promotion</h3>
+            </header>
+            <div class="form-layout">
+              <app-seller-form-field label="Coupon Code">
+                <input type="text" value="SHRAVAN25" />
+              </app-seller-form-field>
+              <app-seller-form-field label="Discount Type">
+                <select>
+                  <option>Percentage</option>
+                  <option>Flat Discount</option>
+                  <option>Buy 1 Get 1</option>
+                </select>
+              </app-seller-form-field>
+              <app-seller-form-field label="Discount Value">
+                <input type="text" value="25%" />
+              </app-seller-form-field>
+              <app-seller-form-field label="Usage Limit">
+                <input type="text" value="1500" />
+              </app-seller-form-field>
+            </div>
+            <button type="button" class="primary form-button">Launch Campaign</button>
+          </section>
+        </section>
+
+        <section class="content-grid" *ngSwitchCase="'analytics'">
+          <app-analytics-chart
+            title="Sales per day"
+            subtitle="Daily order throughput in the current month."
+            [data]="vm.salesPerDay"
+            mode="line"></app-analytics-chart>
+
+          <app-analytics-chart
+            title="Customer growth"
+            subtitle="New and repeat customer base expansion."
+            [data]="vm.customerGrowth"
+            mode="bar"></app-analytics-chart>
+
+          <app-analytics-chart
+            title="Revenue trend"
+            subtitle="High-level seller revenue line for leadership review."
+            [data]="vm.revenueTrend"
+            mode="line"></app-analytics-chart>
+
+          <app-analytics-chart
+            title="Category performance"
+            subtitle="Top category contribution for assortment planning."
+            [data]="vm.categoryPerformance"
+            mode="bar"></app-analytics-chart>
+        </section>
+
+        <section class="content-stack" *ngSwitchCase="'payments'">
+          <div class="metric-grid metric-grid--compact">
+            <app-metric-card label="Total Revenue" value="Rs 18.42L" delta="Gross marketplace collections" tone="revenue"></app-metric-card>
+            <app-metric-card label="Platform Commission" value="Rs 2.21L" delta="12.0% blended platform fee" tone="warning"></app-metric-card>
+            <app-metric-card label="Net Earnings" value="Rs 16.21L" delta="After commissions and refunds" tone="success"></app-metric-card>
+            <app-metric-card label="Pending Payout" value="Rs 1.84L" delta="Next settlement cycle due in 2 days" tone="orders"></app-metric-card>
+          </div>
+
+          <app-data-table
+            [title]="vm.paymentTable.title"
+            [subtitle]="vm.paymentTable.subtitle"
+            [columns]="vm.paymentTable.columns"
+            [rows]="vm.paymentTable.rows"></app-data-table>
+        </section>
+
+        <section class="content-grid" *ngSwitchCase="'shipping'">
+          <section class="form-card">
+            <header>
+              <p class="seller-kicker">Shipping & logistics</p>
+              <h3>Shipping configuration</h3>
+            </header>
+            <dl class="settings-list">
+              <div>
+                <dt>Shipping partners</dt>
+                <dd>{{ vm.shippingSettings.partners.join(', ') }}</dd>
+              </div>
+              <div>
+                <dt>Delivery regions</dt>
+                <dd>{{ vm.shippingSettings.deliveryRegions.join(', ') }}</dd>
+              </div>
+              <div>
+                <dt>Shipping charges</dt>
+                <dd>{{ vm.shippingSettings.shippingCharge }}</dd>
+              </div>
+              <div>
+                <dt>Free shipping threshold</dt>
+                <dd>{{ vm.shippingSettings.freeShippingThreshold }}</dd>
+              </div>
+              <div>
+                <dt>Estimated delivery</dt>
+                <dd>{{ vm.shippingSettings.estimatedDelivery }}</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section class="alert-card">
+            <header>
+              <p class="seller-kicker">Delivery watch</p>
+              <h3>Shipping alerts</h3>
+            </header>
+            <article *ngFor="let alert of vm.shippingAlerts; trackBy: trackByAlert" [class]="'alert-item alert-item--' + alert.tone">
+              <strong>{{ alert.label }} · {{ alert.value }}</strong>
+              <p>{{ alert.detail }}</p>
+            </article>
+          </section>
+        </section>
+
+        <section class="content-grid" *ngSwitchCase="'messages'">
+          <section class="message-card" *ngFor="let message of vm.messages">
+            <div>
+              <p class="seller-kicker">Customer conversation</p>
+              <h3>{{ message.customer }}</h3>
+              <strong>{{ message.subject }}</strong>
+              <p>{{ message.excerpt }}</p>
+            </div>
+            <span [class.unread]="message.unread">{{ message.unread ? 'Unread' : 'Responded' }}</span>
+          </section>
+        </section>
+
+        <section class="content-grid form-grid" *ngSwitchCase="'settings'">
+          <section class="form-card form-card--wide">
+            <header>
+              <p class="seller-kicker">Shop settings</p>
+              <h3>Business profile</h3>
+            </header>
+
+            <div class="form-layout">
+              <app-seller-form-field label="Shop name">
+                <input type="text" [value]="vm.shopSettings.shopName" />
+              </app-seller-form-field>
+              <app-seller-form-field label="Shop banner">
+                <input type="text" [value]="vm.shopSettings.banner" />
+              </app-seller-form-field>
+              <app-seller-form-field label="Shop address">
+                <textarea rows="4">{{ vm.shopSettings.address }}</textarea>
+              </app-seller-form-field>
+              <app-seller-form-field label="Return policy">
+                <textarea rows="4">{{ vm.shopSettings.returnPolicy }}</textarea>
+              </app-seller-form-field>
+              <app-seller-form-field label="Tax settings (GST)">
+                <input type="text" [value]="vm.shopSettings.gstNumber" />
+              </app-seller-form-field>
+              <app-seller-form-field label="Bank details for payouts">
+                <input type="text" [value]="vm.shopSettings.bankAccount" />
+              </app-seller-form-field>
+            </div>
+
+            <button type="button" class="primary form-button">Save Settings</button>
+          </section>
+        </section>
+
+        <section class="content-stack" *ngSwitchCase="'support'">
+          <app-data-table
+            [title]="vm.supportTable.title"
+            [subtitle]="vm.supportTable.subtitle"
+            [columns]="vm.supportTable.columns"
+            [rows]="vm.supportTable.rows"></app-data-table>
+
+          <section class="form-card">
+            <header>
+              <p class="seller-kicker">Support ticket system</p>
+              <h3>Create support ticket</h3>
+            </header>
+            <div class="form-layout">
+              <app-seller-form-field label="Subject">
+                <input type="text" value="Settlement mismatch in payout batch" />
+              </app-seller-form-field>
+              <app-seller-form-field label="Priority">
+                <select>
+                  <option>High</option>
+                  <option>Medium</option>
+                  <option>Low</option>
+                </select>
+              </app-seller-form-field>
+              <app-seller-form-field label="Description">
+                <textarea rows="5">Please verify commission deduction against payout report for March 15 cycle.</textarea>
+              </app-seller-form-field>
+            </div>
+            <button type="button" class="primary form-button">Open Ticket</button>
+          </section>
+        </section>
+      </ng-container>
+    </main>
+  </div>
+
+  <footer class="seller-footer">
+    <span>Seller Central Enterprise Console</span>
+    <span>JWT-ready, RBAC-ready, pagination-ready, and structured for scalable backend integration.</span>
+  </footer>
+</section>
+
+<ng-template #loadingState>
+  <section class="seller-shell seller-shell--loading">
+    <div class="loading-card" *ngIf="!error; else errorState">
+      <p class="seller-kicker">Seller workspace</p>
+      <h1>Preparing your enterprise dashboard...</h1>
+    </div>
+  </section>
+</ng-template>
+
+<ng-template #errorState>
+  <section class="seller-shell seller-shell--loading">
+    <div class="loading-card loading-card--error">
+      <p class="seller-kicker">Seller workspace</p>
+      <h1>Dashboard unavailable</h1>
+      <p>{{ error }}</p>
+      <a routerLink="/shop-registration">Return to registration</a>
+    </div>
+  </section>
+</ng-template>

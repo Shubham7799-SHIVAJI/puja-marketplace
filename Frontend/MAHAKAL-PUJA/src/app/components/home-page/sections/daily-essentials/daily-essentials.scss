@@ -1,0 +1,104 @@
+.essentials-section {
+  padding: 3rem clamp(1rem, 5vw, 4rem);
+  background: linear-gradient(135deg, #FFF8E7 0%, #FFF3D0 100%);
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+}
+
+.essentials-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 1.25rem;
+
+  @media (max-width: 1100px) { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 580px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.essential-card {
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  border: 1.5px solid rgba(212, 175, 55, 0.2);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  transition: transform 0.25s, box-shadow 0.25s;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(180, 120, 20, 0.06);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 36px rgba(180, 120, 20, 0.16);
+    border-color: #D4AF37;
+    background: #fff;
+  }
+}
+
+.essential-icon {
+  font-size: 2.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.essential-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #2C1810;
+  margin: 0;
+}
+
+.essential-desc {
+  font-size: 0.75rem;
+  color: #8B6940;
+  margin: 0;
+}
+
+.essential-price {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #FF6B00;
+  margin-top: 0.25rem;
+}
+
+.essential-btn {
+  margin-top: 0.5rem;
+  padding: 0.5rem 1.2rem;
+  background: linear-gradient(135deg, #FF6B00, #FFB347);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.9; }
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #D4AF37;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.section-header {
+  h2 {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: #2C1810;
+    margin: 0 0 0.5rem;
+  }
+  p {
+    color: #6B4A2A;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+}

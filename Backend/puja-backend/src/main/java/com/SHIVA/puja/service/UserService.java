@@ -5,6 +5,7 @@ import com.SHIVA.puja.dto.ResendOtpRequest;
 import com.SHIVA.puja.dto.SetPasswordRequest;
 import com.SHIVA.puja.dto.SignInRequest;
 import com.SHIVA.puja.dto.VerifyOtpRequest;
+import com.SHIVA.puja.dto.AuthTokenResponse;
 
 public interface UserService {
 
@@ -16,6 +17,10 @@ public interface UserService {
 
     void setPassword(SetPasswordRequest request);
 
-    void signIn(SignInRequest request);
+    AuthTokenResponse signIn(SignInRequest request);
+
+    AuthTokenResponse refreshAccessToken(String refreshToken);
+
+    void revokeRefreshToken(String refreshToken);
 
 }

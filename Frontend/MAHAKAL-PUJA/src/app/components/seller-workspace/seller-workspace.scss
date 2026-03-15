@@ -1,0 +1,523 @@
+:host {
+  display: block;
+}
+
+.seller-shell {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(16, 185, 129, 0.14), transparent 28%),
+    radial-gradient(circle at top right, rgba(14, 116, 144, 0.14), transparent 32%),
+    linear-gradient(180deg, #f4f7fb 0%, #edf3f8 100%);
+  color: #15273f;
+  font-family: Aptos, 'Segoe UI Variable', 'Segoe UI', sans-serif;
+}
+
+.seller-shell--loading {
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+
+.seller-topbar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 255, 255, 0.84);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(18, 39, 63, 0.08);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.seller-topbar__brand,
+.seller-topbar__actions,
+.seller-topbar__profile,
+.seller-hero__meta,
+.workflow-steps,
+.pill-badge {
+  display: flex;
+  align-items: center;
+}
+
+.seller-topbar__brand {
+  gap: 0.85rem;
+}
+
+.seller-topbar__brand p,
+.seller-topbar__brand strong,
+.seller-hero h1,
+.seller-hero p,
+.seller-kicker,
+.seller-hero__meta span,
+.seller-hero__meta strong,
+.loading-card h1,
+.loading-card p,
+.form-card header h3,
+.form-card header p,
+.alert-card h3,
+.alert-card p,
+.message-card h3,
+.message-card p,
+.message-card strong,
+.seller-footer span,
+.settings-list dt,
+.settings-list dd {
+  margin: 0;
+}
+
+.seller-topbar__logo,
+.seller-topbar__profile span {
+  display: grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 0.95rem;
+  background: linear-gradient(135deg, #0f4c75, #14b8a6);
+  color: #fff;
+  font-weight: 800;
+}
+
+.seller-topbar__brand p,
+.seller-kicker {
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #5f7187;
+}
+
+.seller-topbar__brand strong {
+  color: #13253d;
+}
+
+.seller-topbar__search input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(17, 31, 54, 0.08);
+  border-radius: 999px;
+  padding: 0.95rem 1.15rem;
+  background: #fff;
+  font: inherit;
+}
+
+.seller-topbar__actions {
+  gap: 0.75rem;
+}
+
+.seller-topbar__actions button,
+.seller-sidebar button,
+.seller-sidebar a,
+.form-actions button,
+.form-button,
+.upload-zone button,
+.workflow-steps span {
+  font: inherit;
+}
+
+.seller-topbar__actions button,
+.seller-sidebar__footer button,
+.seller-sidebar__footer a,
+.form-actions button,
+.form-button,
+.upload-zone button {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.seller-topbar__actions button,
+.form-actions button,
+.upload-zone button,
+.seller-sidebar__footer a {
+  background: #e9f1f7;
+  color: #15354f;
+}
+
+.seller-topbar__primary,
+.form-actions .primary,
+.form-button.primary {
+  background: linear-gradient(135deg, #0f5f7a, #0e7490);
+  color: #fff;
+}
+
+.seller-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.25rem;
+  padding: 1.4rem;
+}
+
+.seller-sidebar {
+  display: grid;
+  gap: 1rem;
+  align-content: start;
+  padding: 1.2rem;
+  border-radius: 1.7rem;
+  background: #102033;
+  color: #dbe7f3;
+  min-height: calc(100vh - 7.5rem);
+  position: sticky;
+  top: 5.8rem;
+}
+
+.seller-sidebar nav {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.seller-sidebar button {
+  display: grid;
+  grid-template-columns: 2.3rem 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  padding: 0.85rem 0.95rem;
+  border-radius: 1rem;
+  text-align: left;
+}
+
+.seller-sidebar button.is-active,
+.seller-sidebar button:hover {
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.seller-sidebar__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.seller-sidebar button small {
+  background: rgba(255, 255, 255, 0.12);
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.seller-sidebar__footer {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.seller-sidebar__footer button {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.seller-main {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.seller-hero {
+  display: grid;
+  grid-template-columns: 1.3fr 0.9fr;
+  gap: 1rem;
+  padding: 1.6rem;
+  border-radius: 1.7rem;
+  background: linear-gradient(135deg, #0f2237, #19496a 58%, #14b8a6);
+  color: #fff;
+  box-shadow: 0 28px 60px rgba(16, 31, 54, 0.2);
+}
+
+.seller-hero h1 {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin: 0.4rem 0 0.8rem;
+}
+
+.seller-hero p {
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.84);
+  max-width: 62ch;
+}
+
+.seller-hero__meta {
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.seller-hero__meta > div {
+  flex: 1;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.12);
+  padding: 1rem;
+}
+
+.seller-hero__meta span {
+  display: block;
+  color: rgba(255, 255, 255, 0.72);
+  margin-bottom: 0.35rem;
+}
+
+.seller-hero__meta strong {
+  display: block;
+  font-size: 1.05rem;
+}
+
+.content-grid,
+.metric-grid,
+.overview-grid,
+.content-stack,
+.form-layout,
+.settings-list,
+.seller-footer {
+  display: grid;
+}
+
+.metric-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.metric-grid--compact {
+  grid-template-columns: repeat(4, minmax(220px, 1fr));
+}
+
+.content-grid,
+.content-stack {
+  gap: 1rem;
+}
+
+.overview-grid {
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1rem;
+}
+
+.alert-card,
+.form-card,
+.workflow-card,
+.message-card,
+.loading-card {
+  border-radius: 1.5rem;
+  background: #fff;
+  border: 1px solid rgba(17, 31, 54, 0.08);
+  box-shadow: 0 18px 45px rgba(17, 31, 54, 0.08);
+  padding: 1.25rem;
+}
+
+.loading-card {
+  max-width: 640px;
+}
+
+.loading-card--error {
+  color: #8a1c2c;
+}
+
+.alert-card header,
+.form-card header {
+  margin-bottom: 1rem;
+}
+
+.alert-card h3,
+.form-card header h3,
+.message-card h3,
+.workflow-card h3 {
+  color: #14253d;
+}
+
+.alert-item {
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  margin-top: 0.8rem;
+}
+
+.alert-item p {
+  color: #5c6d82;
+  margin-top: 0.28rem;
+}
+
+.alert-item--warning { background: #fff6df; }
+.alert-item--danger { background: #ffe6e6; }
+.alert-item--info { background: #e7f7ff; }
+
+.form-grid {
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1rem;
+}
+
+.form-card--wide {
+  grid-column: 1 / -1;
+}
+
+.form-layout {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.form-layout app-seller-form-field:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+}
+
+.upload-zone {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1.25rem;
+  border: 1px dashed rgba(15, 95, 122, 0.25);
+  border-radius: 1.2rem;
+  padding: 1rem 1.1rem;
+  background: linear-gradient(180deg, rgba(14, 116, 144, 0.06), rgba(255, 255, 255, 0.9));
+}
+
+.upload-zone p {
+  color: #627386;
+  margin-top: 0.28rem;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.form-button {
+  margin-top: 1rem;
+}
+
+.workflow-card {
+  background: linear-gradient(180deg, #fff, #f3f8fc);
+}
+
+.workflow-steps {
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.workflow-steps span {
+  padding: 0.7rem 0.9rem;
+  border-radius: 999px;
+  background: #eef4f9;
+  color: #1d3c58;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.message-card {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.message-card p:last-child {
+  color: #647488;
+  margin-top: 0.55rem;
+}
+
+.message-card span {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  background: #edf3f8;
+  color: #37536d;
+  font-weight: 700;
+}
+
+.message-card span.unread {
+  background: #dff8f3;
+  color: #0f766e;
+}
+
+.settings-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem 1rem;
+}
+
+.settings-list div {
+  padding: 0.95rem 1rem;
+  border-radius: 1rem;
+  background: #f4f7fb;
+}
+
+.settings-list dt {
+  font-size: 0.77rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6b7b8f;
+  font-weight: 800;
+}
+
+.settings-list dd {
+  margin-top: 0.45rem;
+  color: #17324d;
+  font-weight: 700;
+}
+
+.seller-footer {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding: 0 1.4rem 1.4rem;
+  color: #5d6d82;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 1280px) {
+  .metric-grid,
+  .metric-grid--compact,
+  .form-grid,
+  .overview-grid,
+  .settings-list,
+  .seller-hero,
+  .seller-footer {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 1040px) {
+  .seller-topbar,
+  .seller-layout,
+  .seller-hero,
+  .overview-grid,
+  .metric-grid,
+  .metric-grid--compact,
+  .form-grid,
+  .form-layout,
+  .settings-list,
+  .seller-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .seller-sidebar {
+    position: static;
+    min-height: auto;
+  }
+
+  .upload-zone,
+  .message-card,
+  .seller-topbar__actions,
+  .seller-hero__meta,
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 720px) {
+  .seller-topbar,
+  .seller-layout,
+  .seller-footer {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .seller-topbar {
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+  }
+}

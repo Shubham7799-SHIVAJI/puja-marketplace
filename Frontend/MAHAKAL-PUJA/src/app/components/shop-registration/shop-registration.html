@@ -1,28 +1,25 @@
 <section class="registration-shell">
 	<div class="registration-hero">
 		<div>
-			<p class="eyebrow">Enterprise Marketplace Onboarding</p>
-			<h1>Register every shop with a structured, draft-safe verification flow.</h1>
-			<p class="hero-copy">
-				Capture business details, KYC documents, banking information, and policy consent through a multi-step
-				journey designed for marketplace operations teams.
-			</p>
+			<p class="eyebrow">{{ text.hero.eyebrow }}</p>
+			<h1>{{ text.hero.title }}</h1>
+			<p class="hero-copy">{{ text.hero.copy }}</p>
 		</div>
 
 		<aside class="hero-card">
-			<span class="hero-card-label">Completion</span>
+			<span class="hero-card-label">{{ text.hero.completionLabel }}</span>
 			<strong>{{ completionPercent }}%</strong>
 			<p>{{ currentStep.caption }} of the registration journey</p>
 			<div class="save-indicator" [class.error]="saveState === 'error'">
 				<span class="save-indicator-dot"></span>
 				<span>
-					{{ saveState === 'saving' ? 'Saving...' : saveState === 'saved' ? 'Saved' : saveState === 'error' ? 'Save failed' : 'Idle' }}
+					{{ saveState === 'saving' ? text.hero.saveStates.saving : saveState === 'saved' ? text.hero.saveStates.saved : saveState === 'error' ? text.hero.saveStates.error : text.hero.saveStates.idle }}
 				</span>
 				<small *ngIf="lastSavedAtLabel">{{ lastSavedAtLabel }}</small>
 			</div>
 			<div class="shop-id-panel">
-				<span>Shop ID</span>
-				<strong>{{ control('shopInformation.shopUniqueId')?.value || 'Generated after first save' }}</strong>
+				<span>{{ text.hero.shopIdLabel }}</span>
+				<strong>{{ control('shopInformation.shopUniqueId')?.value || text.hero.shopIdFallback }}</strong>
 			</div>
 		</aside>
 	</div>
@@ -30,10 +27,10 @@
 	<div class="progress-card">
 		<div class="progress-head">
 			<div>
-				<h2>Shop registration flow</h2>
-				<p>Completed steps remain clickable so operators can review earlier information without losing context.</p>
+				<h2>{{ text.progress.title }}</h2>
+				<p>{{ text.progress.description }}</p>
 			</div>
-			<a routerLink="/home" class="secondary-link">Return to dashboard</a>
+			<a routerLink="/home" class="secondary-link">{{ text.progress.returnLink }}</a>
 		</div>
 
 		<div class="stepper-track" role="tablist" aria-label="Shop registration steps">
@@ -66,7 +63,7 @@
 					<p>{{ currentStep.description }}</p>
 				</div>
 
-				<button type="button" class="ghost-button" (click)="saveDraftManually()">Save Draft</button>
+				<button type="button" class="ghost-button" (click)="saveDraftManually()">{{ text.actions.saveDraft }}</button>
 			</div>
 
 			<p *ngIf="backendError" class="form-banner error">{{ backendError }}</p>
@@ -75,28 +72,28 @@
 				<ng-container [ngSwitch]="currentStepIndex">
 					<section *ngSwitchCase="0" formGroupName="accountDetails" class="step-grid">
 						<div class="field-card field-span-2">
-							<h3>Owner profile</h3>
-							<p>Use the legal owner name and verified business contact information.</p>
+							<h3>{{ text.accountDetails.cardTitle }}</h3>
+							<p>{{ text.accountDetails.cardDescription }}</p>
 						</div>
 
 						<label class="field" [class.invalid]="showError('accountDetails.ownerFullName', 'ownerFullName')">
 							<span class="field-icon">&#128100;</span>
 							<input type="text" formControlName="ownerFullName" placeholder=" " />
-							<span class="floating-label">Owner Full Name</span>
-							<span class="tooltip" title="Use the exact legal or tax-registered owner name.">?</span>
-							<small *ngIf="showError('accountDetails.ownerFullName', 'ownerFullName')">{{ errorMessage('accountDetails.ownerFullName', 'Owner Full Name', 'ownerFullName') }}</small>
+							<span class="floating-label">{{ text.accountDetails.fields.ownerFullName.label }}</span>
+							<span class="tooltip" [title]="text.accountDetails.fields.ownerFullName.tooltip">?</span>
+							<small *ngIf="showError('accountDetails.ownerFullName', 'ownerFullName')">{{ errorMessage('accountDetails.ownerFullName', text.accountDetails.fields.ownerFullName.label, 'ownerFullName') }}</small>
 						</label>
 
 						<div class="field-action-row">
 							<label class="field" [class.invalid]="showError('accountDetails.email', 'email')">
 								<span class="field-icon">@</span>
 								<input type="email" formControlName="email" placeholder=" " />
-								<span class="floating-label">Email Address</span>
-								<span class="tooltip" title="Primary owner email for operational communication.">?</span>
-								<small *ngIf="showError('accountDetails.email', 'email')">{{ errorMessage('accountDetails.email', 'Email Address', 'email') }}</small>
+								<span class="floating-label">{{ text.accountDetails.fields.email.label }}</span>
+								<span class="tooltip" [title]="text.accountDetails.fields.email.tooltip">?</span>
+								<small *ngIf="showError('accountDetails.email', 'email')">{{ errorMessage('accountDetails.email', text.accountDetails.fields.email.label, 'email') }}</small>
 							</label>
 							<button type="button" class="inline-action" (click)="sendOtp('EMAIL')" [disabled]="otpStates.EMAIL.sending || otpStates.EMAIL.verifying">
-								{{ otpStates.EMAIL.sending ? 'Sending...' : 'Send Email OTP' }}
+								{{ otpStates.EMAIL.sending ? text.accountDetails.sending : text.accountDetails.sendEmailOtp }}
 							</button>
 						</div>
 
@@ -104,29 +101,29 @@
 							<label class="field" [class.invalid]="showError('accountDetails.phoneNumber', 'phoneNumber')">
 								<span class="field-icon">&#9742;</span>
 								<input type="tel" formControlName="phoneNumber" placeholder=" " maxlength="10" />
-								<span class="floating-label">Phone Number</span>
-								<span class="tooltip" title="10 digit Indian mobile number used for SMS OTP verification.">?</span>
-								<small *ngIf="showError('accountDetails.phoneNumber', 'phoneNumber')">{{ errorMessage('accountDetails.phoneNumber', 'Phone Number', 'phoneNumber') }}</small>
+								<span class="floating-label">{{ text.accountDetails.fields.phoneNumber.label }}</span>
+								<span class="tooltip" [title]="text.accountDetails.fields.phoneNumber.tooltip">?</span>
+								<small *ngIf="showError('accountDetails.phoneNumber', 'phoneNumber')">{{ errorMessage('accountDetails.phoneNumber', text.accountDetails.fields.phoneNumber.label, 'phoneNumber') }}</small>
 							</label>
 							<button type="button" class="inline-action" (click)="sendOtp('PHONE')" [disabled]="otpStates.PHONE.sending || otpStates.PHONE.verifying">
-								{{ otpStates.PHONE.sending ? 'Sending...' : 'Send Phone OTP' }}
+								{{ otpStates.PHONE.sending ? text.accountDetails.sending : text.accountDetails.sendPhoneOtp }}
 							</button>
 						</div>
 
 						<label class="field" [class.invalid]="showError('accountDetails.password', 'password')">
 							<span class="field-icon">&#128274;</span>
 							<input type="password" formControlName="password" placeholder=" " />
-							<span class="floating-label">Password</span>
-							<span class="tooltip" title="Minimum 8 characters for marketplace account access.">?</span>
-							<small *ngIf="showError('accountDetails.password', 'password')">{{ errorMessage('accountDetails.password', 'Password', 'password') }}</small>
+							<span class="floating-label">{{ text.accountDetails.fields.password.label }}</span>
+							<span class="tooltip" [title]="text.accountDetails.fields.password.tooltip">?</span>
+							<small *ngIf="showError('accountDetails.password', 'password')">{{ errorMessage('accountDetails.password', text.accountDetails.fields.password.label, 'password') }}</small>
 						</label>
 
 						<label class="field" [class.invalid]="showError('accountDetails.confirmPassword', 'confirmPassword') || control('accountDetails')?.hasError('passwordMismatch')">
 							<span class="field-icon">&#10003;</span>
 							<input type="password" formControlName="confirmPassword" placeholder=" " />
-							<span class="floating-label">Confirm Password</span>
-							<span class="tooltip" title="Repeat the same password exactly.">?</span>
-							<small *ngIf="showError('accountDetails.confirmPassword', 'confirmPassword') || control('accountDetails')?.hasError('passwordMismatch')">{{ errorMessage('accountDetails.confirmPassword', 'Confirm Password', 'confirmPassword') }}</small>
+							<span class="floating-label">{{ text.accountDetails.fields.confirmPassword.label }}</span>
+							<span class="tooltip" [title]="text.accountDetails.fields.confirmPassword.tooltip">?</span>
+							<small *ngIf="showError('accountDetails.confirmPassword', 'confirmPassword') || control('accountDetails')?.hasError('passwordMismatch')">{{ errorMessage('accountDetails.confirmPassword', text.accountDetails.fields.confirmPassword.label, 'confirmPassword') }}</small>
 						</label>
 
 						<div class="otp-card" [class.verified]="otpStates.EMAIL.verified">
@@ -134,16 +131,16 @@
 								<label class="field" [class.invalid]="showError('accountDetails.emailOtp', 'emailOtp')">
 									<span class="field-icon">#</span>
 									<input type="text" formControlName="emailOtp" placeholder=" " maxlength="6" />
-									<span class="floating-label">Email OTP</span>
-									<span class="tooltip" title="Enter the 6 digit email OTP and verify it.">?</span>
-									<small *ngIf="showError('accountDetails.emailOtp', 'emailOtp')">{{ errorMessage('accountDetails.emailOtp', 'Email OTP', 'emailOtp') }}</small>
+									<span class="floating-label">{{ text.accountDetails.fields.emailOtp.label }}</span>
+									<span class="tooltip" [title]="text.accountDetails.fields.emailOtp.tooltip">?</span>
+									<small *ngIf="showError('accountDetails.emailOtp', 'emailOtp')">{{ errorMessage('accountDetails.emailOtp', text.accountDetails.fields.emailOtp.label, 'emailOtp') }}</small>
 								</label>
 								<button type="button" class="inline-action verify-action" (click)="verifyOtp('EMAIL')" [disabled]="otpStates.EMAIL.verifying || otpStates.EMAIL.sending">
-									{{ otpStates.EMAIL.verifying ? 'Verifying...' : otpStates.EMAIL.verified ? 'Verified' : 'Verify Email OTP' }}
+									{{ otpStates.EMAIL.verifying ? text.accountDetails.verifying : otpStates.EMAIL.verified ? text.accountDetails.verified : text.accountDetails.verifyEmailOtp }}
 								</button>
 							</div>
 							<p *ngIf="otpStates.EMAIL.message" class="otp-feedback success">{{ otpStates.EMAIL.message }}</p>
-							<p *ngIf="otpStates.EMAIL.previewOtp" class="otp-feedback preview">Test OTP: {{ otpStates.EMAIL.previewOtp }}</p>
+							<p *ngIf="otpStates.EMAIL.previewOtp" class="otp-feedback preview">{{ text.accountDetails.previewPrefix }} {{ otpStates.EMAIL.previewOtp }}</p>
 							<p *ngIf="otpStates.EMAIL.error" class="otp-feedback error">{{ otpStates.EMAIL.error }}</p>
 						</div>
 
@@ -152,36 +149,36 @@
 								<label class="field" [class.invalid]="showError('accountDetails.phoneOtp', 'phoneOtp')">
 									<span class="field-icon">#</span>
 									<input type="text" formControlName="phoneOtp" placeholder=" " maxlength="6" />
-									<span class="floating-label">Phone OTP</span>
-									<span class="tooltip" title="Enter the 6 digit OTP sent to the phone number and verify it.">?</span>
-									<small *ngIf="showError('accountDetails.phoneOtp', 'phoneOtp')">{{ errorMessage('accountDetails.phoneOtp', 'Phone OTP', 'phoneOtp') }}</small>
+									<span class="floating-label">{{ text.accountDetails.fields.phoneOtp.label }}</span>
+									<span class="tooltip" [title]="text.accountDetails.fields.phoneOtp.tooltip">?</span>
+									<small *ngIf="showError('accountDetails.phoneOtp', 'phoneOtp')">{{ errorMessage('accountDetails.phoneOtp', text.accountDetails.fields.phoneOtp.label, 'phoneOtp') }}</small>
 								</label>
 								<button type="button" class="inline-action verify-action" (click)="verifyOtp('PHONE')" [disabled]="otpStates.PHONE.verifying || otpStates.PHONE.sending">
-									{{ otpStates.PHONE.verifying ? 'Verifying...' : otpStates.PHONE.verified ? 'Verified' : 'Verify Phone OTP' }}
+									{{ otpStates.PHONE.verifying ? text.accountDetails.verifying : otpStates.PHONE.verified ? text.accountDetails.verified : text.accountDetails.verifyPhoneOtp }}
 								</button>
 							</div>
 							<p *ngIf="otpStates.PHONE.message" class="otp-feedback success">{{ otpStates.PHONE.message }}</p>
-							<p *ngIf="otpStates.PHONE.previewOtp" class="otp-feedback preview">Test OTP: {{ otpStates.PHONE.previewOtp }}</p>
+							<p *ngIf="otpStates.PHONE.previewOtp" class="otp-feedback preview">{{ text.accountDetails.previewPrefix }} {{ otpStates.PHONE.previewOtp }}</p>
 							<p *ngIf="otpStates.PHONE.error" class="otp-feedback error">{{ otpStates.PHONE.error }}</p>
 						</div>
 
 						<div class="field-span-2 otp-rule-banner" [class.invalid]="!!otpVerificationMessage()">
-							<strong>Verification rule</strong>
-							<p>For now, either email OTP or phone OTP verification is enough to continue.</p>
+							<strong>{{ text.accountDetails.verificationRuleTitle }}</strong>
+							<p>{{ text.accountDetails.verificationRuleDescription }}</p>
 							<small *ngIf="otpVerificationMessage()">{{ otpVerificationMessage() }}</small>
 						</div>
 
 						<div class="field-span-2">
 							<app-file-upload-field
-								label="Profile Photo"
-								helperText="Upload a clear profile photo in JPG, PNG, or WEBP format. Maximum 5 MB."
+								[label]="text.accountDetails.fields.profilePhoto.label"
+								[helperText]="text.accountDetails.fields.profilePhoto.helperText"
 								[accept]="uploadAccept('profilePhoto')"
 								[fileName]="uploadStates.profilePhoto.fileName"
 								[previewUrl]="uploadStates.profilePhoto.previewUrl"
 								[progress]="uploadStates.profilePhoto.progress"
 								[isUploading]="uploadStates.profilePhoto.isUploading"
 								[uploaded]="uploadStates.profilePhoto.uploaded"
-								[error]="uploadStates.profilePhoto.error || (showError('accountDetails.profilePhoto', 'profilePhoto') ? errorMessage('accountDetails.profilePhoto', 'Profile Photo', 'profilePhoto') : '')"
+								[error]="uploadStates.profilePhoto.error || (showError('accountDetails.profilePhoto', 'profilePhoto') ? errorMessage('accountDetails.profilePhoto', text.accountDetails.fields.profilePhoto.label, 'profilePhoto') : '')"
 								(fileSelected)="handleFileSelected('profilePhoto', $event)"
 								(clearFile)="clearUploadedFile('profilePhoto')"
 							></app-file-upload-field>
@@ -190,186 +187,186 @@
 
 					<section *ngSwitchCase="1" formGroupName="shopInformation" class="step-grid">
 						<div class="field-card field-span-2">
-							<h3>Storefront identity</h3>
-							<p>Define how the shop appears across marketplace catalogs and administrative systems.</p>
+							<h3>{{ text.shopInformation.cardTitle }}</h3>
+							<p>{{ text.shopInformation.cardDescription }}</p>
 						</div>
 
 						<label class="field field-span-2" [class.invalid]="showError('shopInformation.shopName', 'shopName')">
 							<span class="field-icon">&#127970;</span>
 							<input type="text" formControlName="shopName" placeholder=" " />
-							<span class="floating-label">Shop Name</span>
-							<span class="tooltip" title="Use the public-facing storefront name.">?</span>
-							<small *ngIf="showError('shopInformation.shopName', 'shopName')">{{ errorMessage('shopInformation.shopName', 'Shop Name', 'shopName') }}</small>
+							<span class="floating-label">{{ text.shopInformation.fields.shopName.label }}</span>
+							<span class="tooltip" [title]="text.shopInformation.fields.shopName.tooltip">?</span>
+							<small *ngIf="showError('shopInformation.shopName', 'shopName')">{{ errorMessage('shopInformation.shopName', text.shopInformation.fields.shopName.label, 'shopName') }}</small>
 						</label>
 
 						<label class="field readonly-field">
 							<span class="field-icon">ID</span>
 							<input type="text" formControlName="shopUniqueId" placeholder=" " readonly />
-							<span class="floating-label">Shop Unique ID</span>
-							<span class="tooltip" title="Generated by the system after the first draft save.">?</span>
+							<span class="floating-label">{{ text.shopInformation.fields.shopUniqueId.label }}</span>
+							<span class="tooltip" [title]="text.shopInformation.fields.shopUniqueId.tooltip">?</span>
 						</label>
 
 						<label class="field" [class.invalid]="showError('shopInformation.shopCategory', 'shopCategory')">
 							<span class="field-icon">&#9776;</span>
 							<select formControlName="shopCategory">
-								<option value="" disabled>Select a category</option>
+								<option value="" disabled>{{ text.shopInformation.fields.shopCategory.placeholder }}</option>
 								<option *ngFor="let category of shopCategories" [value]="category">{{ category }}</option>
 							</select>
-							<span class="floating-label">Shop Category</span>
-							<span class="tooltip" title="Choose the best-fit operating category for discovery and reporting.">?</span>
-							<small *ngIf="showError('shopInformation.shopCategory', 'shopCategory')">{{ errorMessage('shopInformation.shopCategory', 'Shop Category', 'shopCategory') }}</small>
+							<span class="floating-label">{{ text.shopInformation.fields.shopCategory.label }}</span>
+							<span class="tooltip" [title]="text.shopInformation.fields.shopCategory.tooltip">?</span>
+							<small *ngIf="showError('shopInformation.shopCategory', 'shopCategory')">{{ errorMessage('shopInformation.shopCategory', text.shopInformation.fields.shopCategory.label, 'shopCategory') }}</small>
 						</label>
 
 						<label class="field field-span-2 tall-field" [class.invalid]="showError('shopInformation.shopDescription', 'shopDescription')">
 							<span class="field-icon">&#9998;</span>
 							<textarea formControlName="shopDescription" rows="5" placeholder=" "></textarea>
-							<span class="floating-label">Shop Description</span>
-							<span class="tooltip" title="Describe inventory, operating model, and unique value proposition.">?</span>
-							<small *ngIf="showError('shopInformation.shopDescription', 'shopDescription')">{{ errorMessage('shopInformation.shopDescription', 'Shop Description', 'shopDescription') }}</small>
+							<span class="floating-label">{{ text.shopInformation.fields.shopDescription.label }}</span>
+							<span class="tooltip" [title]="text.shopInformation.fields.shopDescription.tooltip">?</span>
+							<small *ngIf="showError('shopInformation.shopDescription', 'shopDescription')">{{ errorMessage('shopInformation.shopDescription', text.shopInformation.fields.shopDescription.label, 'shopDescription') }}</small>
 						</label>
 					</section>
 
 					<section *ngSwitchCase="2" formGroupName="address" class="step-grid">
 						<div class="field-card field-span-2">
-							<h3>Operational address</h3>
-							<p>Capture the physical business location so fulfillment and field operations have precise coordinates.</p>
+							<h3>{{ text.address.cardTitle }}</h3>
+							<p>{{ text.address.cardDescription }}</p>
 						</div>
 
 						<label class="field field-span-2" [class.invalid]="showError('address.addressLine1', 'addressLine1')">
 							<span class="field-icon">&#8962;</span>
 							<input type="text" formControlName="addressLine1" placeholder=" " />
-							<span class="floating-label">Address Line 1</span>
-							<span class="tooltip" title="Street, building number, or primary business address line.">?</span>
-							<small *ngIf="showError('address.addressLine1', 'addressLine1')">{{ errorMessage('address.addressLine1', 'Address Line 1', 'addressLine1') }}</small>
+							<span class="floating-label">{{ text.address.fields.addressLine1.label }}</span>
+							<span class="tooltip" [title]="text.address.fields.addressLine1.tooltip">?</span>
+							<small *ngIf="showError('address.addressLine1', 'addressLine1')">{{ errorMessage('address.addressLine1', text.address.fields.addressLine1.label, 'addressLine1') }}</small>
 						</label>
 
 						<label class="field field-span-2">
 							<span class="field-icon">+</span>
 							<input type="text" formControlName="addressLine2" placeholder=" " />
-							<span class="floating-label">Address Line 2</span>
-							<span class="tooltip" title="Optional landmark zone, floor, or suite detail.">?</span>
+							<span class="floating-label">{{ text.address.fields.addressLine2.label }}</span>
+							<span class="tooltip" [title]="text.address.fields.addressLine2.tooltip">?</span>
 						</label>
 
 						<label class="field" [class.invalid]="showError('address.city', 'city')">
 							<span class="field-icon">&#127961;</span>
 							<input type="text" formControlName="city" placeholder=" " />
-							<span class="floating-label">City</span>
-							<span class="tooltip" title="City where the shop operates.">?</span>
-							<small *ngIf="showError('address.city', 'city')">{{ errorMessage('address.city', 'City', 'city') }}</small>
+							<span class="floating-label">{{ text.address.fields.city.label }}</span>
+							<span class="tooltip" [title]="text.address.fields.city.tooltip">?</span>
+							<small *ngIf="showError('address.city', 'city')">{{ errorMessage('address.city', text.address.fields.city.label, 'city') }}</small>
 						</label>
 
 						<label class="field" [class.invalid]="showError('address.state', 'state')">
 							<span class="field-icon">&#9873;</span>
 							<select formControlName="state">
-								<option value="" disabled>Select a state</option>
+								<option value="" disabled>{{ text.address.fields.state.placeholder }}</option>
 								<option *ngFor="let state of indianStates" [value]="state">{{ state }}</option>
 							</select>
-							<span class="floating-label">State</span>
-							<span class="tooltip" title="Administrative region used for tax, delivery, and support mapping.">?</span>
-							<small *ngIf="showError('address.state', 'state')">{{ errorMessage('address.state', 'State', 'state') }}</small>
+							<span class="floating-label">{{ text.address.fields.state.label }}</span>
+							<span class="tooltip" [title]="text.address.fields.state.tooltip">?</span>
+							<small *ngIf="showError('address.state', 'state')">{{ errorMessage('address.state', text.address.fields.state.label, 'state') }}</small>
 						</label>
 
 						<label class="field" [class.invalid]="showError('address.pincode', 'pincode')">
 							<span class="field-icon">#</span>
 							<input type="text" formControlName="pincode" placeholder=" " maxlength="6" />
-							<span class="floating-label">Pincode</span>
-							<span class="tooltip" title="6 digit Indian pincode for routing and service coverage.">?</span>
-							<small *ngIf="showError('address.pincode', 'pincode')">{{ errorMessage('address.pincode', 'Pincode', 'pincode') }}</small>
+							<span class="floating-label">{{ text.address.fields.pincode.label }}</span>
+							<span class="tooltip" [title]="text.address.fields.pincode.tooltip">?</span>
+							<small *ngIf="showError('address.pincode', 'pincode')">{{ errorMessage('address.pincode', text.address.fields.pincode.label, 'pincode') }}</small>
 						</label>
 
 						<label class="field">
 							<span class="field-icon">&#127760;</span>
 							<input type="text" formControlName="country" placeholder=" " />
-							<span class="floating-label">Country</span>
-							<span class="tooltip" title="Defaults to India for this onboarding program.">?</span>
+							<span class="floating-label">{{ text.address.fields.country.label }}</span>
+							<span class="tooltip" [title]="text.address.fields.country.tooltip">?</span>
 						</label>
 
 						<label class="field field-span-2">
 							<span class="field-icon">&#128205;</span>
 							<input type="text" formControlName="landmark" placeholder=" " />
-							<span class="floating-label">Landmark</span>
-							<span class="tooltip" title="Helpful nearby landmark for navigation and support visits.">?</span>
+							<span class="floating-label">{{ text.address.fields.landmark.label }}</span>
+							<span class="tooltip" [title]="text.address.fields.landmark.tooltip">?</span>
 						</label>
 
 						<label class="field">
 							<span class="field-icon">Lat</span>
 							<input type="number" formControlName="latitude" placeholder=" " step="0.000001" />
-							<span class="floating-label">Latitude</span>
-							<span class="tooltip" title="Optional geolocation coordinate for map pinning.">?</span>
+							<span class="floating-label">{{ text.address.fields.latitude.label }}</span>
+							<span class="tooltip" [title]="text.address.fields.latitude.tooltip">?</span>
 						</label>
 
 						<label class="field">
 							<span class="field-icon">Lng</span>
 							<input type="number" formControlName="longitude" placeholder=" " step="0.000001" />
-							<span class="floating-label">Longitude</span>
-							<span class="tooltip" title="Optional geolocation coordinate for map pinning.">?</span>
+							<span class="floating-label">{{ text.address.fields.longitude.label }}</span>
+							<span class="tooltip" [title]="text.address.fields.longitude.tooltip">?</span>
 						</label>
 					</section>
 
 					<section *ngSwitchCase="3" formGroupName="contactDetails" class="step-grid">
 						<div class="field-card field-span-2">
-							<h3>Customer contact channels</h3>
-							<p>These details will be used in marketplace operations, escalations, and customer communication.</p>
+							<h3>{{ text.contactDetails.cardTitle }}</h3>
+							<p>{{ text.contactDetails.cardDescription }}</p>
 						</div>
 
 						<label class="field" [class.invalid]="showError('contactDetails.shopPhoneNumber', 'shopPhoneNumber')">
 							<span class="field-icon">&#9742;</span>
 							<input type="tel" formControlName="shopPhoneNumber" placeholder=" " maxlength="10" />
-							<span class="floating-label">Shop Phone Number</span>
-							<span class="tooltip" title="Primary phone number visible to marketplace support teams.">?</span>
-							<small *ngIf="showError('contactDetails.shopPhoneNumber', 'shopPhoneNumber')">{{ errorMessage('contactDetails.shopPhoneNumber', 'Shop Phone Number', 'shopPhoneNumber') }}</small>
+							<span class="floating-label">{{ text.contactDetails.fields.shopPhoneNumber.label }}</span>
+							<span class="tooltip" [title]="text.contactDetails.fields.shopPhoneNumber.tooltip">?</span>
+							<small *ngIf="showError('contactDetails.shopPhoneNumber', 'shopPhoneNumber')">{{ errorMessage('contactDetails.shopPhoneNumber', text.contactDetails.fields.shopPhoneNumber.label, 'shopPhoneNumber') }}</small>
 						</label>
 
 						<label class="field" [class.invalid]="showError('contactDetails.shopEmail', 'shopEmail')">
 							<span class="field-icon">@</span>
 							<input type="email" formControlName="shopEmail" placeholder=" " />
-							<span class="floating-label">Shop Email</span>
-							<span class="tooltip" title="Customer-facing email for order or support related communication.">?</span>
-							<small *ngIf="showError('contactDetails.shopEmail', 'shopEmail')">{{ errorMessage('contactDetails.shopEmail', 'Shop Email', 'shopEmail') }}</small>
+							<span class="floating-label">{{ text.contactDetails.fields.shopEmail.label }}</span>
+							<span class="tooltip" [title]="text.contactDetails.fields.shopEmail.tooltip">?</span>
+							<small *ngIf="showError('contactDetails.shopEmail', 'shopEmail')">{{ errorMessage('contactDetails.shopEmail', text.contactDetails.fields.shopEmail.label, 'shopEmail') }}</small>
 						</label>
 
 						<label class="field field-span-2" [class.invalid]="showError('contactDetails.whatsappNumber', 'whatsappNumber')">
 							<span class="field-icon">WA</span>
 							<input type="tel" formControlName="whatsappNumber" placeholder=" " maxlength="10" />
-							<span class="floating-label">WhatsApp Number</span>
-							<span class="tooltip" title="Operations and customer communication number for WhatsApp updates.">?</span>
-							<small *ngIf="showError('contactDetails.whatsappNumber', 'whatsappNumber')">{{ errorMessage('contactDetails.whatsappNumber', 'WhatsApp Number', 'whatsappNumber') }}</small>
+							<span class="floating-label">{{ text.contactDetails.fields.whatsappNumber.label }}</span>
+							<span class="tooltip" [title]="text.contactDetails.fields.whatsappNumber.tooltip">?</span>
+							<small *ngIf="showError('contactDetails.whatsappNumber', 'whatsappNumber')">{{ errorMessage('contactDetails.whatsappNumber', text.contactDetails.fields.whatsappNumber.label, 'whatsappNumber') }}</small>
 						</label>
 					</section>
 
 					<section *ngSwitchCase="4" formGroupName="kycVerification" class="step-grid">
 						<div class="field-card field-span-2">
-							<h3>KYC and statutory verification</h3>
-							<p>Upload mandatory identity proof and capture compliance references for onboarding review.</p>
+							<h3>{{ text.kycVerification.cardTitle }}</h3>
+							<p>{{ text.kycVerification.cardDescription }}</p>
 						</div>
 
 						<label class="field" [class.invalid]="showError('kycVerification.ownerAadharNumber', 'ownerAadharNumber')">
 							<span class="field-icon">ID</span>
 							<input type="text" formControlName="ownerAadharNumber" placeholder=" " maxlength="12" />
-							<span class="floating-label">Owner Aadhar Number</span>
-							<span class="tooltip" title="Enter the 12 digit Aadhar number without spaces.">?</span>
-							<small *ngIf="showError('kycVerification.ownerAadharNumber', 'ownerAadharNumber')">{{ errorMessage('kycVerification.ownerAadharNumber', 'Owner Aadhar Number', 'ownerAadharNumber') }}</small>
+							<span class="floating-label">{{ text.kycVerification.fields.ownerAadharNumber.label }}</span>
+							<span class="tooltip" [title]="text.kycVerification.fields.ownerAadharNumber.tooltip">?</span>
+							<small *ngIf="showError('kycVerification.ownerAadharNumber', 'ownerAadharNumber')">{{ errorMessage('kycVerification.ownerAadharNumber', text.kycVerification.fields.ownerAadharNumber.label, 'ownerAadharNumber') }}</small>
 						</label>
 
 						<label class="field" [class.invalid]="showError('kycVerification.ownerPanNumber', 'ownerPanNumber')">
 							<span class="field-icon">PAN</span>
 							<input type="text" formControlName="ownerPanNumber" placeholder=" " maxlength="10" style="text-transform: uppercase" />
-							<span class="floating-label">Owner PAN Number</span>
-							<span class="tooltip" title="Use the PAN in uppercase format.">?</span>
-							<small *ngIf="showError('kycVerification.ownerPanNumber', 'ownerPanNumber')">{{ errorMessage('kycVerification.ownerPanNumber', 'Owner PAN Number', 'ownerPanNumber') }}</small>
+							<span class="floating-label">{{ text.kycVerification.fields.ownerPanNumber.label }}</span>
+							<span class="tooltip" [title]="text.kycVerification.fields.ownerPanNumber.tooltip">?</span>
+							<small *ngIf="showError('kycVerification.ownerPanNumber', 'ownerPanNumber')">{{ errorMessage('kycVerification.ownerPanNumber', text.kycVerification.fields.ownerPanNumber.label, 'ownerPanNumber') }}</small>
 						</label>
 
 						<div>
 							<app-file-upload-field
-								label="Owner Aadhar Photo"
-								helperText="Upload the Aadhar photo in JPG, PNG, or WEBP format. Maximum 5 MB."
+								[label]="text.kycVerification.fields.ownerAadharPhoto.label"
+								[helperText]="text.kycVerification.fields.ownerAadharPhoto.helperText"
 								[accept]="uploadAccept('ownerAadharPhoto')"
 								[fileName]="uploadStates.ownerAadharPhoto.fileName"
 								[previewUrl]="uploadStates.ownerAadharPhoto.previewUrl"
 								[progress]="uploadStates.ownerAadharPhoto.progress"
 								[isUploading]="uploadStates.ownerAadharPhoto.isUploading"
 								[uploaded]="uploadStates.ownerAadharPhoto.uploaded"
-								[error]="uploadStates.ownerAadharPhoto.error || (showError('kycVerification.ownerAadharPhoto', 'ownerAadharPhoto') ? errorMessage('kycVerification.ownerAadharPhoto', 'Owner Aadhar Photo', 'ownerAadharPhoto') : '')"
+								[error]="uploadStates.ownerAadharPhoto.error || (showError('kycVerification.ownerAadharPhoto', 'ownerAadharPhoto') ? errorMessage('kycVerification.ownerAadharPhoto', text.kycVerification.fields.ownerAadharPhoto.label, 'ownerAadharPhoto') : '')"
 								(fileSelected)="handleFileSelected('ownerAadharPhoto', $event)"
 								(clearFile)="clearUploadedFile('ownerAadharPhoto')"
 							></app-file-upload-field>
@@ -377,15 +374,15 @@
 
 						<div>
 							<app-file-upload-field
-								label="Owner PAN Photo"
-								helperText="Upload the PAN photo in JPG, PNG, or WEBP format. Maximum 5 MB."
+								[label]="text.kycVerification.fields.ownerPanPhoto.label"
+								[helperText]="text.kycVerification.fields.ownerPanPhoto.helperText"
 								[accept]="uploadAccept('ownerPanPhoto')"
 								[fileName]="uploadStates.ownerPanPhoto.fileName"
 								[previewUrl]="uploadStates.ownerPanPhoto.previewUrl"
 								[progress]="uploadStates.ownerPanPhoto.progress"
 								[isUploading]="uploadStates.ownerPanPhoto.isUploading"
 								[uploaded]="uploadStates.ownerPanPhoto.uploaded"
-								[error]="uploadStates.ownerPanPhoto.error || (showError('kycVerification.ownerPanPhoto', 'ownerPanPhoto') ? errorMessage('kycVerification.ownerPanPhoto', 'Owner PAN Photo', 'ownerPanPhoto') : '')"
+								[error]="uploadStates.ownerPanPhoto.error || (showError('kycVerification.ownerPanPhoto', 'ownerPanPhoto') ? errorMessage('kycVerification.ownerPanPhoto', text.kycVerification.fields.ownerPanPhoto.label, 'ownerPanPhoto') : '')"
 								(fileSelected)="handleFileSelected('ownerPanPhoto', $event)"
 								(clearFile)="clearUploadedFile('ownerPanPhoto')"
 							></app-file-upload-field>
@@ -393,15 +390,15 @@
 
 						<div>
 							<app-file-upload-field
-								label="Owner Selfie With ID"
-								helperText="Upload the selfie with ID in JPG, PNG, or WEBP format. Maximum 5 MB."
+								[label]="text.kycVerification.fields.ownerSelfieWithId.label"
+								[helperText]="text.kycVerification.fields.ownerSelfieWithId.helperText"
 								[accept]="uploadAccept('ownerSelfieWithId')"
 								[fileName]="uploadStates.ownerSelfieWithId.fileName"
 								[previewUrl]="uploadStates.ownerSelfieWithId.previewUrl"
 								[progress]="uploadStates.ownerSelfieWithId.progress"
 								[isUploading]="uploadStates.ownerSelfieWithId.isUploading"
 								[uploaded]="uploadStates.ownerSelfieWithId.uploaded"
-								[error]="uploadStates.ownerSelfieWithId.error || (showError('kycVerification.ownerSelfieWithId', 'ownerSelfieWithId') ? errorMessage('kycVerification.ownerSelfieWithId', 'Owner Selfie With ID', 'ownerSelfieWithId') : '')"
+								[error]="uploadStates.ownerSelfieWithId.error || (showError('kycVerification.ownerSelfieWithId', 'ownerSelfieWithId') ? errorMessage('kycVerification.ownerSelfieWithId', text.kycVerification.fields.ownerSelfieWithId.label, 'ownerSelfieWithId') : '')"
 								(fileSelected)="handleFileSelected('ownerSelfieWithId', $event)"
 								(clearFile)="clearUploadedFile('ownerSelfieWithId')"
 							></app-file-upload-field>
@@ -410,22 +407,22 @@
 						<label class="field" [class.invalid]="showError('kycVerification.gstNumber', 'gstNumber')">
 							<span class="field-icon">GST</span>
 							<input type="text" formControlName="gstNumber" placeholder=" " style="text-transform: uppercase" />
-							<span class="floating-label">GST Number</span>
-							<span class="tooltip" title="Optional, but if provided the GST certificate becomes mandatory.">?</span>
-							<small *ngIf="showError('kycVerification.gstNumber', 'gstNumber')">{{ errorMessage('kycVerification.gstNumber', 'GST Number', 'gstNumber') }}</small>
+							<span class="floating-label">{{ text.kycVerification.fields.gstNumber.label }}</span>
+							<span class="tooltip" [title]="text.kycVerification.fields.gstNumber.tooltip">?</span>
+							<small *ngIf="showError('kycVerification.gstNumber', 'gstNumber')">{{ errorMessage('kycVerification.gstNumber', text.kycVerification.fields.gstNumber.label, 'gstNumber') }}</small>
 						</label>
 
 						<div>
 							<app-file-upload-field
-								label="GST Certificate Upload"
-								helperText="Required only when GST number is entered. Upload PDF or DOCX. Maximum 5 MB."
+								[label]="text.kycVerification.fields.gstCertificateUpload.label"
+								[helperText]="text.kycVerification.fields.gstCertificateUpload.helperText"
 								[accept]="uploadAccept('gstCertificateUpload')"
 								[fileName]="uploadStates.gstCertificateUpload.fileName"
 								[previewUrl]="uploadStates.gstCertificateUpload.previewUrl"
 								[progress]="uploadStates.gstCertificateUpload.progress"
 								[isUploading]="uploadStates.gstCertificateUpload.isUploading"
 								[uploaded]="uploadStates.gstCertificateUpload.uploaded"
-								[error]="uploadStates.gstCertificateUpload.error || (showError('kycVerification.gstCertificateUpload', 'gstCertificateUpload') || control('kycVerification')?.hasError('gstCertificateRequired') ? errorMessage('kycVerification.gstCertificateUpload', 'GST Certificate Upload', 'gstCertificateUpload') : '')"
+								[error]="uploadStates.gstCertificateUpload.error || (showError('kycVerification.gstCertificateUpload', 'gstCertificateUpload') || control('kycVerification')?.hasError('gstCertificateRequired') ? errorMessage('kycVerification.gstCertificateUpload', text.kycVerification.fields.gstCertificateUpload.label, 'gstCertificateUpload') : '')"
 								(fileSelected)="handleFileSelected('gstCertificateUpload', $event)"
 								(clearFile)="clearUploadedFile('gstCertificateUpload')"
 							></app-file-upload-field>
@@ -434,77 +431,80 @@
 						<label class="field field-span-2" [class.invalid]="showError('kycVerification.businessRegistrationNumber', 'businessRegistrationNumber')">
 							<span class="field-icon">BRN</span>
 							<input type="text" formControlName="businessRegistrationNumber" placeholder=" " />
-							<span class="floating-label">Business Registration Number</span>
-							<span class="tooltip" title="Trade license, MSME, or other business registration reference.">?</span>
-							<small *ngIf="showError('kycVerification.businessRegistrationNumber', 'businessRegistrationNumber')">{{ errorMessage('kycVerification.businessRegistrationNumber', 'Business Registration Number', 'businessRegistrationNumber') }}</small>
+							<span class="floating-label">{{ text.kycVerification.fields.businessRegistrationNumber.label }}</span>
+							<span class="tooltip" [title]="text.kycVerification.fields.businessRegistrationNumber.tooltip">?</span>
+							<small *ngIf="showError('kycVerification.businessRegistrationNumber', 'businessRegistrationNumber')">{{ errorMessage('kycVerification.businessRegistrationNumber', text.kycVerification.fields.businessRegistrationNumber.label, 'businessRegistrationNumber') }}</small>
 						</label>
 					</section>
 
 					<section *ngSwitchCase="5" formGroupName="bankDetails" class="step-grid">
 						<div class="field-card field-span-2">
-							<h3>Settlement and payouts</h3>
-							<p>Use the operational payout account that should receive marketplace settlements.</p>
+							<h3>{{ text.bankDetails.cardTitle }}</h3>
+							<p>{{ text.bankDetails.cardDescription }}</p>
 						</div>
 
 						<label class="field" [class.invalid]="showError('bankDetails.accountHolderName', 'accountHolderName')">
 							<span class="field-icon">&#128100;</span>
 							<input type="text" formControlName="accountHolderName" placeholder=" " />
-							<span class="floating-label">Account Holder Name</span>
-							<span class="tooltip" title="Must match the bank records for faster verification.">?</span>
-							<small *ngIf="showError('bankDetails.accountHolderName', 'accountHolderName')">{{ errorMessage('bankDetails.accountHolderName', 'Account Holder Name', 'accountHolderName') }}</small>
+							<span class="floating-label">{{ text.bankDetails.fields.accountHolderName.label }}</span>
+							<span class="tooltip" [title]="text.bankDetails.fields.accountHolderName.tooltip">?</span>
+							<small *ngIf="showError('bankDetails.accountHolderName', 'accountHolderName')">{{ errorMessage('bankDetails.accountHolderName', text.bankDetails.fields.accountHolderName.label, 'accountHolderName') }}</small>
 						</label>
 
 						<label class="field" [class.invalid]="showError('bankDetails.bankName', 'bankName')">
 							<span class="field-icon">&#127974;</span>
-							<input type="text" formControlName="bankName" placeholder=" " />
-							<span class="floating-label">Bank Name</span>
-							<span class="tooltip" title="Bank branch or institution name.">?</span>
-							<small *ngIf="showError('bankDetails.bankName', 'bankName')">{{ errorMessage('bankDetails.bankName', 'Bank Name', 'bankName') }}</small>
+							<select formControlName="bankName">
+								<option value="" disabled>{{ text.bankDetails.selectPlaceholder }}</option>
+								<option *ngFor="let bank of indianBanks" [value]="bank">{{ bank }}</option>
+							</select>
+							<span class="floating-label">{{ text.bankDetails.fields.bankName.label }}</span>
+							<span class="tooltip" [title]="text.bankDetails.fields.bankName.tooltip">?</span>
+							<small *ngIf="showError('bankDetails.bankName', 'bankName')">{{ errorMessage('bankDetails.bankName', text.bankDetails.fields.bankName.label, 'bankName') }}</small>
 						</label>
 
 						<label class="field" [class.invalid]="showError('bankDetails.accountNumber', 'accountNumber')">
 							<span class="field-icon">#</span>
 							<input type="text" formControlName="accountNumber" placeholder=" " />
-							<span class="floating-label">Account Number</span>
-							<span class="tooltip" title="Use only numeric bank account digits.">?</span>
-							<small *ngIf="showError('bankDetails.accountNumber', 'accountNumber')">{{ errorMessage('bankDetails.accountNumber', 'Account Number', 'accountNumber') }}</small>
+							<span class="floating-label">{{ text.bankDetails.fields.accountNumber.label }}</span>
+							<span class="tooltip" [title]="text.bankDetails.fields.accountNumber.tooltip">?</span>
+							<small *ngIf="showError('bankDetails.accountNumber', 'accountNumber')">{{ errorMessage('bankDetails.accountNumber', text.bankDetails.fields.accountNumber.label, 'accountNumber') }}</small>
 						</label>
 
 						<label class="field" [class.invalid]="showError('bankDetails.confirmAccountNumber', 'confirmAccountNumber') || control('bankDetails')?.hasError('accountMismatch')">
 							<span class="field-icon">&#10003;</span>
 							<input type="text" formControlName="confirmAccountNumber" placeholder=" " />
-							<span class="floating-label">Confirm Account Number</span>
-							<span class="tooltip" title="Repeat the payout account number to avoid settlement issues.">?</span>
-							<small *ngIf="showError('bankDetails.confirmAccountNumber', 'confirmAccountNumber') || control('bankDetails')?.hasError('accountMismatch')">{{ errorMessage('bankDetails.confirmAccountNumber', 'Confirm Account Number', 'confirmAccountNumber') }}</small>
+							<span class="floating-label">{{ text.bankDetails.fields.confirmAccountNumber.label }}</span>
+							<span class="tooltip" [title]="text.bankDetails.fields.confirmAccountNumber.tooltip">?</span>
+							<small *ngIf="showError('bankDetails.confirmAccountNumber', 'confirmAccountNumber') || control('bankDetails')?.hasError('accountMismatch')">{{ errorMessage('bankDetails.confirmAccountNumber', text.bankDetails.fields.confirmAccountNumber.label, 'confirmAccountNumber') }}</small>
 						</label>
 
 						<label class="field" [class.invalid]="showError('bankDetails.ifscCode', 'ifscCode')">
 							<span class="field-icon">IFSC</span>
 							<input type="text" formControlName="ifscCode" placeholder=" " style="text-transform: uppercase" />
-							<span class="floating-label">IFSC Code</span>
-							<span class="tooltip" title="11 character IFSC used for bank verification.">?</span>
-							<small *ngIf="showError('bankDetails.ifscCode', 'ifscCode')">{{ errorMessage('bankDetails.ifscCode', 'IFSC Code', 'ifscCode') }}</small>
+							<span class="floating-label">{{ text.bankDetails.fields.ifscCode.label }}</span>
+							<span class="tooltip" [title]="text.bankDetails.fields.ifscCode.tooltip">?</span>
+							<small *ngIf="showError('bankDetails.ifscCode', 'ifscCode')">{{ errorMessage('bankDetails.ifscCode', text.bankDetails.fields.ifscCode.label, 'ifscCode') }}</small>
 						</label>
 
 						<label class="field" [class.invalid]="showError('bankDetails.upiId', 'upiId')">
 							<span class="field-icon">UPI</span>
 							<input type="text" formControlName="upiId" placeholder=" " />
-							<span class="floating-label">UPI ID</span>
-							<span class="tooltip" title="Optional UPI handle for faster settlements or reimbursements.">?</span>
-							<small *ngIf="showError('bankDetails.upiId', 'upiId')">{{ errorMessage('bankDetails.upiId', 'UPI ID', 'upiId') }}</small>
+							<span class="floating-label">{{ text.bankDetails.fields.upiId.label }}</span>
+							<span class="tooltip" [title]="text.bankDetails.fields.upiId.tooltip">?</span>
+							<small *ngIf="showError('bankDetails.upiId', 'upiId')">{{ errorMessage('bankDetails.upiId', text.bankDetails.fields.upiId.label, 'upiId') }}</small>
 						</label>
 
 						<div class="field-span-2">
 							<app-file-upload-field
-								label="Cancelled Cheque Photo"
-								helperText="Upload the cancelled cheque photo in JPG, PNG, or WEBP format. Maximum 5 MB."
+								[label]="text.bankDetails.fields.cancelledChequePhoto.label"
+								[helperText]="text.bankDetails.fields.cancelledChequePhoto.helperText"
 								[accept]="uploadAccept('cancelledChequePhoto')"
 								[fileName]="uploadStates.cancelledChequePhoto.fileName"
 								[previewUrl]="uploadStates.cancelledChequePhoto.previewUrl"
 								[progress]="uploadStates.cancelledChequePhoto.progress"
 								[isUploading]="uploadStates.cancelledChequePhoto.isUploading"
 								[uploaded]="uploadStates.cancelledChequePhoto.uploaded"
-								[error]="uploadStates.cancelledChequePhoto.error || (showError('bankDetails.cancelledChequePhoto', 'cancelledChequePhoto') ? errorMessage('bankDetails.cancelledChequePhoto', 'Cancelled Cheque Photo', 'cancelledChequePhoto') : '')"
+								[error]="uploadStates.cancelledChequePhoto.error || (showError('bankDetails.cancelledChequePhoto', 'cancelledChequePhoto') ? errorMessage('bankDetails.cancelledChequePhoto', text.bankDetails.fields.cancelledChequePhoto.label, 'cancelledChequePhoto') : '')"
 								(fileSelected)="handleFileSelected('cancelledChequePhoto', $event)"
 								(clearFile)="clearUploadedFile('cancelledChequePhoto')"
 							></app-file-upload-field>
@@ -513,25 +513,25 @@
 
 					<section *ngSwitchCase="6" formGroupName="policies" class="step-grid final-step-grid">
 						<div class="field-card field-span-2 review-card">
-							<h3>Application review</h3>
-							<p>Confirm the business is ready for operational onboarding and marketplace policy compliance.</p>
+							<h3>{{ text.policies.cardTitle }}</h3>
+							<p>{{ text.policies.cardDescription }}</p>
 
 							<dl>
 								<div>
-									<dt>Owner</dt>
-									<dd>{{ control('accountDetails.ownerFullName')?.value || 'Not captured yet' }}</dd>
+									<dt>{{ text.policies.review.owner }}</dt>
+									<dd>{{ control('accountDetails.ownerFullName')?.value || text.policies.review.ownerFallback }}</dd>
 								</div>
 								<div>
-									<dt>Shop</dt>
-									<dd>{{ control('shopInformation.shopName')?.value || 'Not captured yet' }}</dd>
+									<dt>{{ text.policies.review.shop }}</dt>
+									<dd>{{ control('shopInformation.shopName')?.value || text.policies.review.shopFallback }}</dd>
 								</div>
 								<div>
-									<dt>Location</dt>
-									<dd>{{ control('address.city')?.value || 'City missing' }}, {{ control('address.state')?.value || 'State missing' }}</dd>
+									<dt>{{ text.policies.review.location }}</dt>
+									<dd>{{ control('address.city')?.value || text.policies.review.cityFallback }}, {{ control('address.state')?.value || text.policies.review.stateFallback }}</dd>
 								</div>
 								<div>
-									<dt>Status</dt>
-									<dd>{{ saveState === 'saved' ? 'Draft saved' : saveState === 'saving' ? 'Saving' : 'Pending' }}</dd>
+									<dt>{{ text.policies.review.status }}</dt>
+									<dd>{{ saveState === 'saved' ? text.policies.review.statusDraftSaved : saveState === 'saving' ? text.policies.review.statusSaving : text.policies.review.statusPending }}</dd>
 								</div>
 							</dl>
 						</div>
@@ -539,27 +539,27 @@
 						<label class="checkbox-card" [class.invalid]="showError('policies.acceptTermsAndConditions', 'acceptTermsAndConditions')">
 							<input type="checkbox" formControlName="acceptTermsAndConditions" />
 							<div>
-								<strong>Accept Terms and Conditions</strong>
-								<p>Confirms the shop agrees to marketplace operating rules and onboarding commitments.</p>
-								<small *ngIf="showError('policies.acceptTermsAndConditions', 'acceptTermsAndConditions')">{{ errorMessage('policies.acceptTermsAndConditions', 'Terms and Conditions', 'acceptTermsAndConditions') }}</small>
+								<strong>{{ text.policies.checkboxes.terms.title }}</strong>
+								<p>{{ text.policies.checkboxes.terms.description }}</p>
+								<small *ngIf="showError('policies.acceptTermsAndConditions', 'acceptTermsAndConditions')">{{ errorMessage('policies.acceptTermsAndConditions', text.policies.checkboxes.terms.title, 'acceptTermsAndConditions') }}</small>
 							</div>
 						</label>
 
 						<label class="checkbox-card" [class.invalid]="showError('policies.acceptPrivacyPolicy', 'acceptPrivacyPolicy')">
 							<input type="checkbox" formControlName="acceptPrivacyPolicy" />
 							<div>
-								<strong>Accept Privacy Policy</strong>
-								<p>Confirms understanding of data processing, KYC storage, and operational communication handling.</p>
-								<small *ngIf="showError('policies.acceptPrivacyPolicy', 'acceptPrivacyPolicy')">{{ errorMessage('policies.acceptPrivacyPolicy', 'Privacy Policy', 'acceptPrivacyPolicy') }}</small>
+								<strong>{{ text.policies.checkboxes.privacy.title }}</strong>
+								<p>{{ text.policies.checkboxes.privacy.description }}</p>
+								<small *ngIf="showError('policies.acceptPrivacyPolicy', 'acceptPrivacyPolicy')">{{ errorMessage('policies.acceptPrivacyPolicy', text.policies.checkboxes.privacy.title, 'acceptPrivacyPolicy') }}</small>
 							</div>
 						</label>
 
 						<label class="checkbox-card" [class.invalid]="showError('policies.acceptCommissionPolicy', 'acceptCommissionPolicy')">
 							<input type="checkbox" formControlName="acceptCommissionPolicy" />
 							<div>
-								<strong>Accept Commission Policy</strong>
-								<p>Confirms agreement to the platform’s revenue share and payout settlement policy.</p>
-								<small *ngIf="showError('policies.acceptCommissionPolicy', 'acceptCommissionPolicy')">{{ errorMessage('policies.acceptCommissionPolicy', 'Commission Policy', 'acceptCommissionPolicy') }}</small>
+								<strong>{{ text.policies.checkboxes.commission.title }}</strong>
+								<p>{{ text.policies.checkboxes.commission.description }}</p>
+								<small *ngIf="showError('policies.acceptCommissionPolicy', 'acceptCommissionPolicy')">{{ errorMessage('policies.acceptCommissionPolicy', text.policies.checkboxes.commission.title, 'acceptCommissionPolicy') }}</small>
 							</div>
 						</label>
 					</section>
@@ -567,12 +567,10 @@
 			</div>
 
 			<div class="card-footer">
-				<button type="button" class="secondary-button" (click)="goBack()" [disabled]="currentStepIndex === 0 || isSubmitting">Back</button>
+				<button type="button" class="secondary-button" (click)="goBack()" [disabled]="currentStepIndex === 0 || isSubmitting">{{ text.actions.back }}</button>
 
 				<div class="footer-actions">
-					<button type="button" class="ghost-button" (click)="saveDraftManually()" [disabled]="isSubmitting || saveState === 'saving'">
-						Save Draft
-					</button>
+					<button type="button" class="ghost-button" (click)="saveDraftManually()" [disabled]="isSubmitting || saveState === 'saving'">{{ text.actions.saveDraft }}</button>
 
 					<button
 						*ngIf="currentStepIndex < steps.length - 1"
@@ -581,7 +579,7 @@
 						(click)="goNext()"
 						[disabled]="isSubmitting"
 					>
-						Save & Continue
+						{{ text.actions.saveContinue }}
 					</button>
 
 					<button
@@ -591,7 +589,7 @@
 						(click)="submitApplication()"
 						[disabled]="isSubmitting"
 					>
-						{{ isSubmitting ? 'Submitting...' : 'Submit Application' }}
+						{{ isSubmitting ? text.actions.submitting : text.actions.submit }}
 					</button>
 				</div>
 			</div>

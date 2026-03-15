@@ -1,0 +1,53 @@
+<section class="nearby-section">
+  <div class="section-header">
+    <div class="section-label">Fresh & Local</div>
+    <h2>Nearby Temple Shop Products</h2>
+    <p>Fresh puja items delivered directly from sacred temple stores near you</p>
+  </div>
+
+  <div class="nearby-grid">
+    @for (product of products(); track product.id) {
+      <article class="nearby-card">
+        <div class="nearby-badge">
+          <span class="badge-dot"></span>
+          Delivered from nearby temple shop
+        </div>
+
+        <div class="nearby-icon">{{ product.icon }}</div>
+
+        <div class="nearby-body">
+          <h3 class="nearby-name">{{ product.name }}</h3>
+          <div class="nearby-shop">
+            <span class="shop-icon">🏛️</span>
+            <div>
+              <span class="shop-name">{{ product.shopName }}</span>
+              <span class="shop-location">{{ product.shopLocation }}</span>
+            </div>
+          </div>
+
+          <div class="nearby-rating">
+            <div class="stars">
+              @for (star of getStars(product.rating); track $index) {
+                <span class="star" [class.star--full]="star === 'full'">★</span>
+              }
+            </div>
+            <span class="review-count">{{ product.rating }} ({{ product.reviews }})</span>
+          </div>
+
+          <div class="nearby-delivery">
+            <span class="delivery-icon">🚚</span>
+            <span>{{ product.deliveryTime }} Delivery</span>
+          </div>
+
+          <div class="nearby-pricing">
+            <span class="nearby-price">₹{{ product.price }}</span>
+            <span class="nearby-original">₹{{ product.originalPrice }}</span>
+            <span class="nearby-discount">{{ product.discount }}% OFF</span>
+          </div>
+        </div>
+
+        <button class="nearby-cta" type="button">Add to Cart</button>
+      </article>
+    }
+  </div>
+</section>

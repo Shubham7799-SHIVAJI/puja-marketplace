@@ -1,0 +1,134 @@
+.table-card {
+  border-radius: 1.5rem;
+  background: #fff;
+  border: 1px solid rgba(17, 31, 54, 0.08);
+  box-shadow: 0 18px 45px rgba(17, 31, 54, 0.08);
+  overflow: hidden;
+}
+
+.table-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1.25rem 1.25rem 0.5rem;
+}
+
+.table-card__header h3,
+.table-card__header p,
+.table-card__eyebrow {
+  margin: 0;
+}
+
+.table-card__eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6e7e91;
+  font-weight: 800;
+  margin-bottom: 0.45rem;
+}
+
+.table-card__header h3 {
+  font-size: 1.1rem;
+  color: #14253d;
+}
+
+.table-card__header p {
+  color: #6a798c;
+  margin-top: 0.35rem;
+}
+
+.table-card__action {
+  border: 0;
+  border-radius: 999px;
+  background: #eef5fb;
+  color: #0d4b78;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+}
+
+.table-shell {
+  overflow-x: auto;
+  padding: 0.4rem 1.25rem 1.25rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 860px;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 1rem 0.75rem;
+  border-bottom: 1px solid rgba(15, 31, 54, 0.06);
+  vertical-align: middle;
+}
+
+th {
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #758396;
+}
+
+td {
+  font-size: 0.95rem;
+  color: #19314d;
+}
+
+.image-text {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.image-text img {
+  width: 2.7rem;
+  height: 2.7rem;
+  object-fit: cover;
+  border-radius: 0.9rem;
+}
+
+.image-text strong,
+.image-text small {
+  display: block;
+}
+
+.image-text small {
+  color: #6a798c;
+  margin-top: 0.18rem;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.42rem 0.72rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.badge--neutral { background: #eef2f7; color: #4c5f78; }
+.badge--success { background: #dcfce7; color: #166534; }
+.badge--warning { background: #fff4d6; color: #9a6700; }
+.badge--danger { background: #fee2e2; color: #b42318; }
+.badge--info { background: #e0f2fe; color: #075985; }
+
+.pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.pill-list span {
+  display: inline-flex;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  background: #f3f7fb;
+  color: #23415e;
+  font-size: 0.8rem;
+  font-weight: 700;
+}

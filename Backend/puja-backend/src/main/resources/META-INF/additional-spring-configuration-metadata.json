@@ -1,0 +1,101 @@
+{
+  "groups": [
+    {
+      "name": "app",
+      "type": "com.SHIVA.puja.config.AppProperties",
+      "sourceType": "com.SHIVA.puja.config.AppProperties"
+    },
+    {
+      "name": "app.mail",
+      "type": "com.SHIVA.puja.config.AppProperties$Mail",
+      "sourceType": "com.SHIVA.puja.config.AppProperties"
+    },
+    {
+      "name": "app.otp",
+      "type": "com.SHIVA.puja.config.AppProperties$Otp",
+      "sourceType": "com.SHIVA.puja.config.AppProperties"
+    },
+    {
+      "name": "app.twilio",
+      "type": "com.SHIVA.puja.config.AppProperties$Twilio",
+      "sourceType": "com.SHIVA.puja.config.AppProperties"
+    },
+    {
+      "name": "app.security",
+      "type": "com.SHIVA.puja.config.AppProperties$Security",
+      "sourceType": "com.SHIVA.puja.config.AppProperties"
+    },
+    {
+      "name": "app.rate-limit",
+      "type": "com.SHIVA.puja.config.AppProperties$RateLimit",
+      "sourceType": "com.SHIVA.puja.config.AppProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.mail.logo-path",
+      "type": "java.lang.String",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Mail"
+    },
+    {
+      "name": "app.mail.subject",
+      "type": "java.lang.String",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Mail"
+    },
+    {
+      "name": "app.otp.expiration-minutes",
+      "type": "java.lang.Integer",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Otp"
+    },
+    {
+      "name": "app.twilio.account-sid",
+      "type": "java.lang.String",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Twilio"
+    },
+    {
+      "name": "app.twilio.auth-token",
+      "type": "java.lang.String",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Twilio"
+    },
+    {
+      "name": "app.twilio.from-number",
+      "type": "java.lang.String",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Twilio"
+    },
+    {
+      "name": "app.security.jwt-secret",
+      "type": "java.lang.String",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Security"
+    },
+    {
+      "name": "app.security.jwt-expiration-minutes",
+      "type": "java.lang.Long",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Security"
+    },
+    {
+      "name": "app.security.admin-email",
+      "type": "java.lang.String",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Security"
+    },
+    {
+      "name": "app.security.admin-password",
+      "type": "java.lang.String",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Security"
+    },
+    {
+      "name": "app.security.admin-name",
+      "type": "java.lang.String",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$Security"
+    },
+    {
+      "name": "app.rate-limit.requests",
+      "type": "java.lang.Integer",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$RateLimit"
+    },
+    {
+      "name": "app.rate-limit.window-seconds",
+      "type": "java.lang.Integer",
+      "sourceType": "com.SHIVA.puja.config.AppProperties$RateLimit"
+    }
+  ]
+}

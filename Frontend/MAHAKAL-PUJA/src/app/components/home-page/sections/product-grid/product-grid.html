@@ -1,0 +1,111 @@
+<section class="pg-section">
+  <div class="pg-header">
+    <div class="pg-label">Complete Collection</div>
+    <h2 class="pg-title">All Puja Products</h2>
+    <p class="pg-subtitle">Explore our authentic, temple-certified range of sacred items</p>
+  </div>
+
+  <div class="pg-grid">
+    @for (product of products(); track product.id) {
+      <article
+        class="pc"
+        [class.pc--oos]="!product.inStock"
+        (click)="goToProduct(product.id)"
+        role="button"
+        tabindex="0"
+        (keydown.enter)="goToProduct(product.id)"
+        [attr.aria-label]="'View details for ' + product.name"
+      >
+        <!-- Image area -->
+        <div class="pc__img-wrap">
+          <div class="pc__img">
+            <span class="pc__emoji">{{ product.icon }}</span>
+          </div>
+
+          @if (product.discount > 0) {
+            <span class="pc__badge pc__badge--disc">{{ product.discount }}% off</span>
+          }
+          @if (!product.inStock) {
+            <div class="pc__oos-veil">Out of Stock</div>
+          }
+
+          <button
+            class="pc__wish"
+            type="button"
+            (click)="toggleWishlist($event, product)"
+            [class.pc__wish--on]="product.wishlisted"
+            [attr.aria-label]="product.wishlisted ? 'Remove from wishlist' : 'Add to wishlist'"
+          >
+            {{ product.wishlisted ? '' : '' }}
+          </button>
+        </div>
+
+        <!-- Details area -->
+        <div class="pc__body">
+          <span class="pc__cat">{{ product.category }}</span>
+
+          <h3 class="pc__name" [title]="product.name">{{ product.name }}</h3>
+
+          <p class="pc__seller">
+            <span class="pc__seller-icon"></span>
+            <span>{{ product.sellerName }}</span>
+          </p>
+
+          <!-- Rating row -->
+          <div class="pc__rating">
+            <div class="pc__stars">
+              @for (star of getStars(product.rating); track $index) {
+                <span
+                  class="pc__star"
+                  [class.pc__star--full]="star === 'full'"
+                  [class.pc__star--half]="star === 'half'"
+                ></span>
+              }
+            </div>
+            <span class="pc__rating-val">{{ product.rating }}</span>
+            <span class="pc__review-cnt">({{ product.reviews | number }})</span>
+          </div>
+
+          <!-- Price block -->
+          <div class="pc__price-block">
+            <span class="pc__price">?{{ product.price | number }}</span>
+            @if (product.originalPrice > product.price) {
+              <span class="pc__mrp">
+                M.R.P: <s>?{{ product.originalPrice | number }}</s>
+              </span>
+              <span class="pc__saving">Save ?{{ product.originalPrice - product.price | number }}</span>
+            }
+          </div>
+
+          <p class="pc__delivery">
+            <span class="pc__del-icon"></span>
+            FREE delivery on orders above ?499
+          </p>
+        </div>
+
+        <!-- CTA -->
+        <div class="pc__footer">
+          <button
+            class="pc__cart-btn"
+            type="button"
+            [disabled]="!product.inStock"
+            (click)="addToCart($event, product)"
+          >
+            @if (product.inStock) {
+               Add to Cart
+            } @else {
+               Notify Me
+            }
+          </button>
+          <button class="pc__detail-btn" type="button" (click)="goToProduct(product.id)">
+            View Details
+          </button>
+        </div>
+      </article>
+    }
+  </div>
+
+  <div class="pg-more">
+    <button class="pg-more-btn" type="button">View All Products </button>
+  </div>
+</section>

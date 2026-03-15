@@ -1,0 +1,115 @@
+.checkout-shell {
+  min-height: 100vh;
+  padding: 2rem clamp(1rem, 4vw, 3rem);
+  background: linear-gradient(180deg, #fffaf1, #efe6d8);
+}
+
+.eyebrow,
+.section-kicker {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  color: #a86c1c;
+  font-weight: 700;
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.card,
+.empty-card {
+  border-radius: 28px;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 24px 48px rgba(84, 58, 16, 0.1);
+}
+
+.address-list,
+.address-form {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.address-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.75rem;
+  align-items: start;
+  padding: 0.9rem;
+  border-radius: 18px;
+  background: #fff7e9;
+}
+
+.address-card button,
+.toggle-button,
+.primary-button,
+.empty-card a {
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.toggle-button {
+  margin-top: 1rem;
+  background: #f0dfbe;
+  color: #5d3f18;
+}
+
+.primary-button,
+.empty-card a {
+  background: linear-gradient(135deg, #d27a1f, #f1a63d);
+  color: white;
+  text-decoration: none;
+}
+
+.address-form input,
+.field input,
+.field select {
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(146, 105, 41, 0.2);
+  padding: 0.85rem 1rem;
+}
+
+.summary-row,
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(140, 98, 40, 0.1);
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 1rem;
+}
+
+.checkbox-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.success-message {
+  margin-top: 1rem;
+  color: #0b8b43;
+  font-weight: 700;
+}
+
+.empty-card {
+  text-align: center;
+}
+
+@media (max-width: 900px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+}

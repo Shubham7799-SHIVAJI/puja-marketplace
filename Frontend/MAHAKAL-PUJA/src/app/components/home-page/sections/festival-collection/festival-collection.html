@@ -1,0 +1,49 @@
+<section class="festival-section">
+  <div class="section-header">
+    <div class="section-label">Upcoming Celebrations</div>
+    <h2>Festival Collections</h2>
+    <p>Prepare for upcoming festivals with curated, authentic puja items</p>
+  </div>
+
+  @if (collections().length > 0) {
+    <div class="festival-tabs">
+      @for (col of collections(); track col.id; let i = $index) {
+        <button
+          class="tab-btn"
+          [class.tab-btn--active]="i === activeTab()"
+          type="button"
+          (click)="setTab(i)"
+        >
+          {{ col.festival }}
+          <span class="tab-date">{{ col.date }}</span>
+        </button>
+      }
+    </div>
+
+    @let activeCollection = collections()[activeTab()]; 
+    @if (activeCollection) {
+      <div class="festival-banner">
+        <div class="festival-info">
+          <h3>{{ activeCollection.festival }}</h3>
+          <p class="festival-date">🗓️ {{ activeCollection.date }}</p>
+          <p class="festival-desc">Shop exclusive items for this sacred festival</p>
+          <button class="btn-festival" type="button">Explore Full Collection</button>
+        </div>
+
+        <div class="festival-products">
+          @for (product of activeCollection.products; track product.id) {
+            <article class="festival-product-card">
+              <div class="festival-product-icon">{{ product.icon }}</div>
+              <h4 class="festival-product-name">{{ product.name }}</h4>
+              <div class="festival-pricing">
+                <span class="festival-price">₹{{ product.price }}</span>
+                <span class="festival-discount">{{ product.discount }}% OFF</span>
+              </div>
+              <button class="festival-add-btn" type="button">Add</button>
+            </article>
+          }
+        </div>
+      </div>
+    }
+  }
+</section>

@@ -1,0 +1,206 @@
+.festival-section {
+  padding: 3rem clamp(1rem, 5vw, 4rem);
+  background: linear-gradient(135deg, #1A0A00 0%, #3D1A00 50%, #1A0A00 100%);
+  color: #fff;
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    .section-label { color: #FFD700; }
+    h2 { color: #fff; }
+    p { color: rgba(255, 255, 255, 0.7); }
+  }
+}
+
+.festival-tabs {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.75rem 1.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  color: rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.25s;
+
+  &--active {
+    background: linear-gradient(135deg, #FF6B00, #FFB347);
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(255, 107, 0, 0.35);
+  }
+
+  &:hover:not(&--active) {
+    border-color: rgba(255, 215, 0, 0.5);
+    color: #fff;
+  }
+}
+
+.tab-date {
+  font-size: 0.68rem;
+  font-weight: 400;
+  opacity: 0.75;
+}
+
+.festival-banner {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 215, 0, 0.2);
+  border-radius: 24px;
+  padding: 2rem;
+  backdrop-filter: blur(8px);
+
+  @media (max-width: 780px) { grid-template-columns: 1fr; }
+}
+
+.festival-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.75rem;
+
+  h3 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #FFD700;
+    margin: 0;
+  }
+}
+
+.festival-date {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+}
+
+.festival-desc {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
+
+.btn-festival {
+  padding: 0.85rem 1.75rem;
+  background: linear-gradient(135deg, #FF6B00, #FFB347);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: fit-content;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.9; }
+}
+
+.festival-products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 580px) { grid-template-columns: 1fr; }
+}
+
+.festival-product-card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 215, 0, 0.15);
+  border-radius: 16px;
+  padding: 1.25rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  transition: border-color 0.25s, background 0.25s;
+
+  &:hover {
+    border-color: rgba(255, 215, 0, 0.4);
+    background: rgba(255, 255, 255, 0.12);
+  }
+}
+
+.festival-product-icon {
+  font-size: 2.5rem;
+}
+
+.festival-product-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+.festival-pricing {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.festival-price {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #FFD700;
+}
+
+.festival-discount {
+  font-size: 0.68rem;
+  background: rgba(255, 107, 0, 0.25);
+  color: #FFB347;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.festival-add-btn {
+  padding: 0.5rem 1.5rem;
+  background: linear-gradient(135deg, #FF6B00, #FFB347);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.9; }
+}
+
+.section-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #D4AF37;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.section-header {
+  h2 {
+    font-size: clamp(1.5rem, 3vw, 2.2rem);
+    font-weight: 800;
+    color: #2C1810;
+    margin: 0 0 0.5rem;
+  }
+  p {
+    color: #6B4A2A;
+    font-size: 0.95rem;
+    margin: 0;
+  }
+}

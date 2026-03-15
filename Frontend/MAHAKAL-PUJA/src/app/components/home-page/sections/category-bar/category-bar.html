@@ -1,0 +1,22 @@
+<section class="category-section">
+  <div class="category-header">
+    <h2>Shop by Category</h2>
+    <span class="section-divider">🔱</span>
+  </div>
+  <div class="category-scroll-wrap">
+    <div class="category-track">
+      @for (cat of categories(); track cat.id) {
+        <button
+          class="category-pill"
+          [class.category-pill--active]="activeSlug() === cat.slug"
+          type="button"
+          (click)="select(cat.slug)"
+        >
+          <span class="cat-icon">{{ cat.icon }}</span>
+          <span class="cat-name">{{ cat.name }}</span>
+          <span class="cat-count">{{ cat.count }}</span>
+        </button>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;500;600;700&display=swap');
+
+:host { display: block; }
+
+// ── Auth Header ──────────────────────────────────────────────────────────────
+.auth-header {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+}
+
+// ── Black Social Strip ───────────────────────────────────────────────────────
+.auth-header__strip {
+  background: #0d0d0d;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 0.55rem clamp(1rem, 5vw, 3rem);
+  gap: 1rem;
+
+  @media (max-width: 540px) {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 0.5rem;
+  }
+}
+
+// ── Centered Divine Text ─────────────────────────────────────────────────────
+.auth-header__divine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+.auth-header__trident {
+  font-size: 1rem;
+  opacity: 0.9;
+  line-height: 1;
+}
+
+.auth-header__mantra {
+  font-family: 'Noto Sans Devanagari', 'Mangal', 'Arial Unicode MS', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: #f5c518;
+  text-shadow: 0 0 12px rgba(245, 197, 24, 0.5);
+  white-space: nowrap;
+}
+
+// ── Social Icons ─────────────────────────────────────────────────────────────
+.auth-header__socials {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+  transition: color 0.22s, background 0.22s, border-color 0.22s, transform 0.18s;
+
+  svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  // Individual brand hover colours
+  &:nth-child(1):hover {         // Instagram
+    color: #fff;
+    background: radial-gradient(circle at 30% 110%, #feda75 0%, #fa7e1e 25%, #d62976 50%, #962fbf 75%, #4f5bd5 100%);
+    border-color: transparent;
+    transform: translateY(-2px);
+  }
+
+  &:nth-child(2):hover {         // Facebook
+    color: #fff;
+    background: #1877f2;
+    border-color: transparent;
+    transform: translateY(-2px);
+  }
+
+  &:nth-child(3):hover {         // Google
+    color: #fff;
+    background: #ea4335;
+    border-color: transparent;
+    transform: translateY(-2px);
+  }
+
+  &:nth-child(4):hover {         // Pinterest
+    color: #fff;
+    background: #e60023;
+    border-color: transparent;
+    transform: translateY(-2px);
+  }
+}
+
+

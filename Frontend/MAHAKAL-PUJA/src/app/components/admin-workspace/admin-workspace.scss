@@ -1,0 +1,439 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.admin-shell {
+  --admin-bg: linear-gradient(180deg, #f7f1e6 0%, #f4f6fb 42%, #eef2f8 100%);
+  --panel: rgba(255, 255, 255, 0.86);
+  --panel-strong: rgba(255, 255, 255, 0.96);
+  --line: rgba(34, 44, 72, 0.1);
+  --ink: #182033;
+  --muted: #61708f;
+  --accent: #b64926;
+  --accent-soft: rgba(182, 73, 38, 0.12);
+  --success: #167c57;
+  --warning: #a56212;
+  --danger: #b42318;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(182, 73, 38, 0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(22, 124, 87, 0.12), transparent 28%),
+    var(--admin-bg);
+  color: var(--ink);
+  font-family: Manrope, 'Segoe UI', sans-serif;
+}
+
+.admin-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.75rem;
+  background: rgba(24, 32, 51, 0.94);
+  color: #f7f4ee;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand-block {
+  padding: 1.25rem;
+  border-radius: 1.5rem;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.brand-kicker,
+.admin-kicker,
+.insight-card header p,
+.role-card header p {
+  margin: 0 0 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #d7c9b0;
+}
+
+.brand-block h1,
+.admin-topbar h2,
+.hero-panel h3 {
+  margin: 0;
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+  line-height: 1.05;
+}
+
+.brand-block p,
+.admin-topbar p,
+.hero-panel p,
+.body-copy,
+.alert-row p,
+.role-card dd {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.nav-stack {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.nav-item {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.nav-icon,
+.nav-badge,
+.hero-pills span,
+.session-chip,
+.search-chip,
+.ghost-button,
+.state-card a {
+  border-radius: 999px;
+}
+
+.nav-icon {
+  min-width: 2rem;
+  height: 2rem;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+}
+
+.nav-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.nav-copy small,
+.session-chip small {
+  color: rgba(247, 244, 238, 0.72);
+}
+
+.nav-badge {
+  padding: 0.28rem 0.6rem;
+  background: rgba(255, 255, 255, 0.14);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.admin-main {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.admin-topbar,
+.hero-panel,
+.insight-card,
+.snapshot-card,
+.role-card,
+.state-card {
+  background: var(--panel);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--line);
+  box-shadow: 0 20px 50px rgba(34, 44, 72, 0.08);
+}
+
+.admin-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.35rem 1.5rem;
+  border-radius: 1.5rem;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.search-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.3rem 0.95rem;
+  background: var(--panel-strong);
+  border: 1px solid var(--line);
+}
+
+.search-chip span {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.search-chip input {
+  border: 0;
+  background: transparent;
+  min-width: 16rem;
+  outline: none;
+  color: var(--ink);
+}
+
+.session-chip {
+  padding: 0.7rem 1rem;
+  background: rgba(24, 32, 51, 0.92);
+  color: #fff;
+  display: grid;
+}
+
+.ghost-button {
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.hero-panel {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.45rem 1.6rem;
+  border-radius: 1.6rem;
+  background:
+    linear-gradient(135deg, rgba(182, 73, 38, 0.12), rgba(255, 255, 255, 0.94) 42%),
+    var(--panel);
+}
+
+.hero-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  align-content: flex-start;
+  justify-content: flex-end;
+}
+
+.hero-pills span {
+  padding: 0.55rem 0.9rem;
+  background: rgba(24, 32, 51, 0.08);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.metrics-grid,
+.snapshot-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.content-stack,
+.content-grid,
+.chart-grid,
+.tri-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.tri-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.chart-grid--double {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.content-grid--wide {
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.75fr);
+}
+
+.insight-card,
+.role-card,
+.snapshot-card,
+.state-card {
+  border-radius: 1.4rem;
+  padding: 1.2rem 1.3rem;
+}
+
+.alert-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.alert-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 0.9rem 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(34, 44, 72, 0.06);
+}
+
+.alert-row span {
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.alert-row[data-tone='danger'] {
+  background: rgba(180, 35, 24, 0.08);
+}
+
+.alert-row[data-tone='warning'] {
+  background: rgba(165, 98, 18, 0.08);
+}
+
+.alert-row[data-tone='success'] {
+  background: rgba(22, 124, 87, 0.08);
+}
+
+.snapshot-card {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.snapshot-card span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.snapshot-card strong,
+.role-card h4,
+.insight-card h4,
+.state-card strong {
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+}
+
+.snapshot-card strong {
+  font-size: 1.1rem;
+}
+
+.snapshot-card--wide {
+  grid-column: span 2;
+}
+
+.role-card dl {
+  margin: 0;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.role-card div {
+  display: grid;
+  gap: 0.15rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.role-card div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.role-card dt {
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.state-card {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.state-card--error {
+  border-color: rgba(180, 35, 24, 0.22);
+  background: rgba(255, 246, 245, 0.95);
+}
+
+.state-card a {
+  width: fit-content;
+  padding: 0.6rem 0.9rem;
+  background: rgba(24, 32, 51, 0.08);
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 700;
+}
+
+@media (max-width: 1320px) {
+  .admin-shell {
+    grid-template-columns: 280px minmax(0, 1fr);
+  }
+
+  .metrics-grid,
+  .snapshot-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tri-grid,
+  .chart-grid--double,
+  .content-grid--wide {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 960px) {
+  .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-sidebar {
+    padding-bottom: 1rem;
+  }
+
+  .nav-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-topbar,
+  .hero-panel {
+    flex-direction: column;
+  }
+
+  .search-chip {
+    width: 100%;
+  }
+
+  .search-chip input {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-main,
+  .admin-sidebar {
+    padding: 1rem;
+  }
+
+  .nav-stack,
+  .metrics-grid,
+  .snapshot-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .snapshot-card--wide {
+    grid-column: span 1;
+  }
+}

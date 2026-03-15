@@ -1,0 +1,42 @@
+<section class="orders-shell">
+  <header>
+    <p class="eyebrow">{{ text.title }}</p>
+    <h1>{{ text.subtitle }}</h1>
+  </header>
+
+  <div *ngIf="orders().length > 0; else emptyState" class="orders-grid">
+    <article *ngFor="let order of orders()" class="order-card">
+      <header>
+        <div>
+          <p class="order-code">{{ order.orderCode }}</p>
+          <h2>{{ order.sellerName }}</h2>
+        </div>
+        <span class="status-pill">{{ order.orderStatus }}</span>
+      </header>
+
+      <div class="meta-row">
+        <span>Tracking: {{ order.trackingNumber || 'Assigned after fulfillment' }}</span>
+        <span>Payment: {{ order.paymentStatus }}</span>
+      </div>
+
+      <div class="item-list">
+        <div *ngFor="let item of order.items">
+          <strong>{{ item.productName }}</strong>
+          <span>{{ item.quantity }} x Rs {{ item.unitPrice | number: '1.2-2' }}</span>
+        </div>
+      </div>
+
+      <footer>
+        <span>Total Rs {{ order.totalAmount | number: '1.2-2' }}</span>
+        <span>{{ order.orderDate | date: 'medium' }}</span>
+      </footer>
+    </article>
+  </div>
+
+  <ng-template #emptyState>
+    <section class="empty-card">
+      <p>{{ text.empty }}</p>
+      <a routerLink="/home">{{ commonText.backToCatalog }}</a>
+    </section>
+  </ng-template>
+</section>

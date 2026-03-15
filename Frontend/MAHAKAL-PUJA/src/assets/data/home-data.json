@@ -1,0 +1,356 @@
+{
+  "heroSlides": [
+    {
+      "id": 1,
+      "title": "Maha Shivratri Puja Kit",
+      "subtitle": "Complete divine samagri set for Lord Shiva's holy worship",
+      "badge": "Festival Special",
+      "price": 599,
+      "originalPrice": 899,
+      "discount": 33,
+      "bgGradient": "linear-gradient(135deg, #1a0a2e 0%, #2c1654 40%, #4a1f8a 100%)",
+      "accentColor": "#9b59b6",
+      "icon": "🔱"
+    },
+    {
+      "id": 2,
+      "title": "Diwali Puja Essentials",
+      "subtitle": "Everything needed for Goddess Lakshmi's grand puja",
+      "badge": "Diwali Offer",
+      "price": 799,
+      "originalPrice": 1199,
+      "discount": 33,
+      "bgGradient": "linear-gradient(135deg, #1c0a00 0%, #3d1a00 40%, #7a3500 100%)",
+      "accentColor": "#f39c12",
+      "icon": "🪔"
+    },
+    {
+      "id": 3,
+      "title": "Navratri Samagri Set",
+      "subtitle": "Authentic items for 9 nights of Devi's sacred worship",
+      "badge": "Navratri Special",
+      "price": 499,
+      "originalPrice": 699,
+      "discount": 29,
+      "bgGradient": "linear-gradient(135deg, #1a0a0a 0%, #3d1515 40%, #7a2828 100%)",
+      "accentColor": "#e74c3c",
+      "icon": "🌺"
+    }
+  ],
+
+  "categories": [
+    { "id": 1, "name": "Puja Samagri", "icon": "🪔", "slug": "puja-samagri", "count": 248 },
+    { "id": 2, "name": "Incense & Dhoop", "icon": "🌿", "slug": "incense-dhoop", "count": 134 },
+    { "id": 3, "name": "Idols & Murti", "icon": "🙏", "slug": "idols-murti", "count": 312 },
+    { "id": 4, "name": "Diyas & Lamps", "icon": "✨", "slug": "diyas-lamps", "count": 189 },
+    { "id": 5, "name": "Temple Decor", "icon": "🏛️", "slug": "temple-decor", "count": 97 },
+    { "id": 6, "name": "Rudraksha & Mala", "icon": "📿", "slug": "rudraksha-mala", "count": 156 },
+    { "id": 7, "name": "Camphor & Ghee", "icon": "🧈", "slug": "camphor-ghee", "count": 78 },
+    { "id": 8, "name": "Puja Thali Sets", "icon": "🍽️", "slug": "puja-thali", "count": 63 },
+    { "id": 9, "name": "Holy Books", "icon": "📖", "slug": "holy-books", "count": 221 }
+  ],
+
+  "featuredKits": [
+    {
+      "id": 101,
+      "name": "Ganesh Puja Kit",
+      "description": "Complete kit with modak, durva, sindoor & more",
+      "price": 449,
+      "originalPrice": 649,
+      "discount": 31,
+      "rating": 4.8,
+      "reviews": 1234,
+      "icon": "🐘",
+      "color": "#FF6B00",
+      "items": ["Modak", "Durva Grass", "Sindoor", "Yellow Cloth", "Incense", "Camphor"]
+    },
+    {
+      "id": 102,
+      "name": "Lakshmi Puja Kit",
+      "description": "Diwali special with lotus, coins & kalash",
+      "price": 599,
+      "originalPrice": 899,
+      "discount": 33,
+      "rating": 4.9,
+      "reviews": 2089,
+      "icon": "🌸",
+      "color": "#D4AF37",
+      "items": ["Lotus Flower", "Coins", "Kalash", "Red Cloth", "Dhoop", "Chandan"]
+    },
+    {
+      "id": 103,
+      "name": "Shiv Puja Kit",
+      "description": "Bilva patra, bhasma, rudraksha & panchamrit",
+      "price": 379,
+      "originalPrice": 549,
+      "discount": 31,
+      "rating": 4.7,
+      "reviews": 987,
+      "icon": "🔱",
+      "color": "#6B48FF",
+      "items": ["Bilva Patra", "Bhasma", "Rudraksha", "Panchamrit", "Bel", "Incense"]
+    },
+    {
+      "id": 104,
+      "name": "Navgraha Puja Kit",
+      "description": "9 planet items with colored cloths & grains",
+      "price": 699,
+      "originalPrice": 999,
+      "discount": 30,
+      "rating": 4.6,
+      "reviews": 654,
+      "icon": "⭐",
+      "color": "#E91E8C",
+      "items": ["9 Color Cloths", "9 Grains", "Nav Dhanya", "Sesame", "Janeu", "Flowers"]
+    }
+  ],
+
+  "nearbyProducts": [
+    {
+      "id": 201,
+      "name": "Fresh Marigold Garlands",
+      "shopName": "Kashi Vishwanath Temple Shop",
+      "shopLocation": "Varanasi, UP",
+      "price": 49,
+      "originalPrice": 70,
+      "discount": 30,
+      "rating": 4.9,
+      "reviews": 456,
+      "icon": "🌼",
+      "deliveryTime": "Same Day",
+      "isNearby": true
+    },
+    {
+      "id": 202,
+      "name": "Pure Cow Ghee (500ml)",
+      "shopName": "Tirupati Devasthanam Store",
+      "shopLocation": "Tirupati, AP",
+      "price": 299,
+      "originalPrice": 380,
+      "discount": 21,
+      "rating": 4.8,
+      "reviews": 789,
+      "icon": "🧈",
+      "deliveryTime": "Next Day",
+      "isNearby": true
+    },
+    {
+      "id": 203,
+      "name": "Chandan Incense Sticks",
+      "shopName": "Siddhivinayak Prasadalay",
+      "shopLocation": "Mumbai, MH",
+      "price": 89,
+      "originalPrice": 120,
+      "discount": 26,
+      "rating": 4.7,
+      "reviews": 1023,
+      "icon": "🌿",
+      "deliveryTime": "2 Days",
+      "isNearby": true
+    },
+    {
+      "id": 204,
+      "name": "Bronze Diya Set (6 pcs)",
+      "shopName": "Dwarkadheesh Temple Shop",
+      "shopLocation": "Dwarka, GJ",
+      "price": 249,
+      "originalPrice": 349,
+      "discount": 29,
+      "rating": 4.6,
+      "reviews": 312,
+      "icon": "🪔",
+      "deliveryTime": "3 Days",
+      "isNearby": true
+    }
+  ],
+
+  "products": [
+    {
+      "id": 301,
+      "name": "Premium Agarbatti Set",
+      "sellerName": "Om Shanti Traders",
+      "category": "Incense & Dhoop",
+      "price": 149,
+      "originalPrice": 199,
+      "discount": 25,
+      "rating": 4.7,
+      "reviews": 892,
+      "icon": "🌿",
+      "inStock": true,
+      "wishlisted": false
+    },
+    {
+      "id": 302,
+      "name": "Brass Ganesha Idol (6 inch)",
+      "sellerName": "Kashi Art Emporium",
+      "category": "Idols & Murti",
+      "price": 799,
+      "originalPrice": 1199,
+      "discount": 33,
+      "rating": 4.9,
+      "reviews": 2341,
+      "icon": "🐘",
+      "inStock": true,
+      "wishlisted": false
+    },
+    {
+      "id": 303,
+      "name": "Clay Diya Set (12 pcs)",
+      "sellerName": "Mitti Kala Bhandar",
+      "category": "Diyas & Lamps",
+      "price": 79,
+      "originalPrice": 99,
+      "discount": 20,
+      "rating": 4.5,
+      "reviews": 567,
+      "icon": "🪔",
+      "inStock": true,
+      "wishlisted": false
+    },
+    {
+      "id": 304,
+      "name": "Rudraksha Mala (108 beads)",
+      "sellerName": "Haridwar Rudraksha",
+      "category": "Rudraksha & Mala",
+      "price": 499,
+      "originalPrice": 749,
+      "discount": 33,
+      "rating": 4.8,
+      "reviews": 1456,
+      "icon": "📿",
+      "inStock": true,
+      "wishlisted": false
+    },
+    {
+      "id": 305,
+      "name": "Camphor Tablets (100 pcs)",
+      "sellerName": "Pure Puja Supplies",
+      "category": "Camphor & Ghee",
+      "price": 59,
+      "originalPrice": 79,
+      "discount": 25,
+      "rating": 4.6,
+      "reviews": 743,
+      "icon": "⬜",
+      "inStock": true,
+      "wishlisted": false
+    },
+    {
+      "id": 306,
+      "name": "Silver Puja Thali Set",
+      "sellerName": "Vrat Puja Store",
+      "category": "Puja Thali Sets",
+      "price": 1299,
+      "originalPrice": 1799,
+      "discount": 28,
+      "rating": 4.9,
+      "reviews": 334,
+      "icon": "🍽️",
+      "inStock": true,
+      "wishlisted": false
+    },
+    {
+      "id": 307,
+      "name": "Bhagavad Gita (Hindi)",
+      "sellerName": "Gita Press Distributors",
+      "category": "Holy Books",
+      "price": 199,
+      "originalPrice": 250,
+      "discount": 20,
+      "rating": 5.0,
+      "reviews": 5678,
+      "icon": "📖",
+      "inStock": true,
+      "wishlisted": false
+    },
+    {
+      "id": 308,
+      "name": "Marigold Incense Dhoop",
+      "sellerName": "Vrindavan Fragrances",
+      "category": "Incense & Dhoop",
+      "price": 129,
+      "originalPrice": 179,
+      "discount": 28,
+      "rating": 4.4,
+      "reviews": 289,
+      "icon": "🌼",
+      "inStock": false,
+      "wishlisted": false
+    }
+  ],
+
+  "dailyEssentials": [
+    { "id": 401, "name": "Agarbatti", "description": "Sandalwood & Rose", "price": 49, "icon": "🌿" },
+    { "id": 402, "name": "Camphor", "description": "Pure & Natural", "price": 39, "icon": "⬜" },
+    { "id": 403, "name": "Cotton Wicks", "description": "Pack of 100", "price": 29, "icon": "🧵" },
+    { "id": 404, "name": "Pure Ghee", "description": "Cow Ghee 500ml", "price": 299, "icon": "🧈" },
+    { "id": 405, "name": "Kumkum", "description": "Natural Red", "price": 35, "icon": "🔴" },
+    { "id": 406, "name": "Chandan", "description": "White Sandalwood", "price": 89, "icon": "🤍" }
+  ],
+
+  "festivalProducts": [
+    {
+      "id": 501,
+      "festival": "Holi",
+      "date": "March 2026",
+      "products": [
+        { "id": 5011, "name": "Natural Holi Colors Set", "price": 149, "discount": 20, "icon": "🌈" },
+        { "id": 5012, "name": "Gulal Pack (5 colors)", "price": 99, "discount": 15, "icon": "🎨" },
+        { "id": 5013, "name": "Pichkari Deluxe", "price": 249, "discount": 25, "icon": "💦" }
+      ]
+    },
+    {
+      "id": 502,
+      "festival": "Ram Navami",
+      "date": "April 2026",
+      "products": [
+        { "id": 5021, "name": "Ram Navami Puja Kit", "price": 399, "discount": 30, "icon": "🏹" },
+        { "id": 5022, "name": "Tulsi Mala", "price": 149, "discount": 20, "icon": "🌿" },
+        { "id": 5023, "name": "Prasad Mishri Pack", "price": 79, "discount": 10, "icon": "🍬" }
+      ]
+    }
+  ],
+
+  "reviews": [
+    {
+      "id": 601,
+      "name": "Rajesh Kumar",
+      "location": "Delhi",
+      "rating": 5,
+      "text": "Amazing quality puja items! The Ganesh Puja Kit was exactly what I needed for Ganesh Chaturthi. Delivery was super fast and everything was packed beautifully. Jai Ganesh!",
+      "date": "2 days ago",
+      "avatar": "🙏",
+      "verified": true
+    },
+    {
+      "id": 602,
+      "name": "Priya Sharma",
+      "location": "Mumbai",
+      "rating": 5,
+      "text": "Bought the Lakshmi Puja Kit for Diwali and I'm so impressed. Pure ghee, fresh flowers, and authentic items. My family loved everything. Will definitely buy again!",
+      "date": "1 week ago",
+      "avatar": "🌸",
+      "verified": true
+    },
+    {
+      "id": 603,
+      "name": "Suresh Patel",
+      "location": "Ahmedabad",
+      "rating": 4,
+      "text": "Very good collection of temple items. The Rudraksha mala I purchased is genuine and certified. The nearby temple shop feature is a brilliant idea. Highly recommended!",
+      "date": "2 weeks ago",
+      "avatar": "📿",
+      "verified": true
+    },
+    {
+      "id": 604,
+      "name": "Anita Joshi",
+      "location": "Pune",
+      "rating": 5,
+      "text": "My go-to place for all puja needs. The quality is unmatched and the prices are very reasonable compared to local markets. Om Namah Shivaya!",
+      "date": "3 weeks ago",
+      "avatar": "🔱",
+      "verified": true
+    }
+  ]
+}

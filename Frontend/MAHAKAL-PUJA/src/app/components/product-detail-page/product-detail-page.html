@@ -1,0 +1,405 @@
+﻿<div class="pdp-shell">
+
+  @if (loading()) {
+    <div class="pdp-loading">
+      <div class="pdp-loading__spinner"></div>
+      <p>Loading product details...</p>
+    </div>
+  }
+
+  @if (!loading() && error()) {
+    <div class="pdp-error">
+      <span class="pdp-error__icon"></span>
+      <h2>{{ error() }}</h2>
+      <a routerLink="/home" class="pdp-error__btn">Back to Home</a>
+    </div>
+  }
+
+  <!-- ======== API-backed product ======== -->
+  @if (!loading() && !error() && detail(); as vm) {
+    <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/home">Home</a>
+      <span aria-hidden="true">/</span>
+      <a routerLink="/home">{{ vm.product.categoryName }}</a>
+      <span aria-hidden="true">/</span>
+      <span class="pdp-breadcrumb__current">{{ vm.product.name }}</span>
+    </nav>
+
+    <div class="pdp-layout">
+
+      <!-- Gallery -->
+      <aside class="pdp-gallery" aria-label="Product images">
+        <div class="pdp-gallery__main">
+          <img
+            [src]="vm.images[activeImageIndex()]?.imageUrl || vm.product.imageUrl || 'assets/images/LORD_NATRAJ.png'"
+            [alt]="vm.product.name"
+            class="pdp-gallery__hero"
+          />
+        </div>
+        @if (vm.images.length > 1) {
+          <div class="pdp-gallery__thumbs" role="list">
+            @for (img of vm.images; track img.id; let i = $index) {
+              <button
+                type="button"
+                class="pdp-gallery__thumb"
+                [class.pdp-gallery__thumb--active]="activeImageIndex() === i"
+                (click)="activeImageIndex.set(i)"
+                [attr.aria-label]="'View image ' + (i + 1)"
+                role="listitem"
+              >
+                <img [src]="img.imageUrl" [alt]="vm.product.name + ' image ' + (i + 1)" />
+              </button>
+            }
+          </div>
+        }
+        <div class="pdp-gallery__actions">
+          <button type="button" class="pdp-action-link" (click)="toggleCompare()">
+            {{ isCompared() ? ' In Compare' : ' Compare' }}
+          </button>
+        </div>
+      </aside>
+
+      <!-- Product Info -->
+      <main class="pdp-info">
+        <div class="pdp-category-tag">{{ vm.product.categoryName }}</div>
+        <h1 class="pdp-title">{{ vm.product.name }}</h1>
+        <p class="pdp-sold-by">
+          Sold by&nbsp;<a class="pdp-sold-by__link" routerLink="/home">{{ vm.product.sellerName }}</a>
+          @if (vm.product.sellerCode) {
+            <span class="pdp-seller-code">&nbsp; {{ vm.product.sellerCode }}</span>
+          }
+        </p>
+
+        <!-- Rating -->
+        <div class="pdp-rating-row" role="group" aria-label="Product rating">
+          <div class="pdp-stars" aria-hidden="true">
+            @for (star of getStars(vm.product.ratingAverage); track $index) {
+              <span class="pdp-star"
+                [class.pdp-star--full]="star === 'full'"
+                [class.pdp-star--half]="star === 'half'">
+              </span>
+            }
+          </div>
+          <span class="pdp-rating-val">{{ vm.product.ratingAverage | number:'1.1-1' }}</span>
+          <span class="pdp-rating-sep" aria-hidden="true"></span>
+          <span class="pdp-rating-count">{{ vm.product.reviewCount | number }} ratings</span>
+        </div>
+
+        <hr class="pdp-divider" />
+
+        <!-- Price -->
+        <div class="pdp-price-block">
+          @if (vm.product.discountPercent > 0) {
+            <p class="pdp-mrp">M.R.P.:&nbsp;<s>₹{{ vm.product.price | number }}</s></p>
+          }
+          <div class="pdp-price-row">
+            <span class="pdp-price">₹{{ vm.product.finalPrice | number }}</span>
+            @if (vm.product.discountPercent > 0) {
+              <span class="pdp-discount-badge">{{ vm.product.discountPercent }}% off</span>
+            }
+          </div>
+          @if (vm.product.discountPercent > 0) {
+            <p class="pdp-save">You save: ₹{{ vm.product.price - vm.product.finalPrice | number }}</p>
+          }
+          <p class="pdp-tax-note">Inclusive of all taxes</p>
+        </div>
+
+        <!-- Stock & Delivery -->
+        <div class="pdp-meta-strip">
+          @if (vm.product.stockQuantity > 0) {
+            <span class="pdp-badge pdp-badge--green"> In Stock</span>
+          } @else {
+            <span class="pdp-badge pdp-badge--red"> Out of Stock</span>
+          }
+          <span class="pdp-delivery">
+            <span aria-hidden="true"></span>
+            FREE delivery &middot; <strong>{{ vm.estimatedDelivery }}</strong>
+          </span>
+        </div>
+        <p class="pdp-delivery-regions">Delivers to: {{ vm.deliveryRegions }}</p>
+
+        <!-- Description -->
+        @if (vm.product.description) {
+          <div class="pdp-desc">
+            <h2 class="pdp-desc__heading">About this product</h2>
+            <p class="pdp-desc__text">{{ vm.product.description }}</p>
+          </div>
+        }
+
+        <!-- Variants -->
+        @if (vm.variants.length > 0) {
+          <div class="pdp-variants">
+            <span class="pdp-variants__label">Select variant:</span>
+            <div class="pdp-variants__options">
+              @for (variant of vm.variants; track variant.id) {
+                <button
+                  type="button"
+                  class="pdp-variant-chip"
+                  [class.pdp-variant-chip--sel]="selectedVariantId === variant.id"
+                  (click)="selectedVariantId = variant.id"
+                >
+                  {{ variant.variantName }}: {{ variant.variantValue }}
+                  @if (variant.additionalPrice > 0) {
+                    <span>&nbsp;(+₹{{ variant.additionalPrice }})</span>
+                  }
+                </button>
+              }
+            </div>
+          </div>
+        }
+      </main>
+
+      <!-- Buy Box -->
+      <aside class="pdp-buybox" aria-label="Purchase options">
+        <div class="pdp-buybox__price">₹{{ vm.product.finalPrice | number }}</div>
+        @if (vm.product.discountPercent > 0) {
+          <p class="pdp-buybox__discount">{{ vm.product.discountPercent }}% off  Save ₹{{ vm.product.price - vm.product.finalPrice | number }}</p>
+        }
+        <div class="pdp-buybox__delivery">
+          <span aria-hidden="true"></span> FREE Delivery
+          <span class="pdp-buybox__delivery-note">on orders above ₹499</span>
+        </div>
+        @if (vm.product.stockQuantity > 0) {
+          <p class="pdp-buybox__stock"> In Stock</p>
+        } @else {
+          <p class="pdp-buybox__stock pdp-buybox__stock--oos"> Out of Stock</p>
+        }
+        <div class="pdp-buybox__qty">
+          <label for="qty-sel">Qty:</label>
+          <select id="qty-sel" [(ngModel)]="quantity">
+            @for (n of [1,2,3,4,5,6,7,8,9,10]; track n) {
+              <option [value]="n">{{ n }}</option>
+            }
+          </select>
+        </div>
+        <button
+          type="button"
+          class="pdp-btn pdp-btn--cart"
+          [disabled]="vm.product.stockQuantity === 0"
+          (click)="addToCart()"
+        > Add to Cart</button>
+        <button
+          type="button"
+          class="pdp-btn pdp-btn--buy"
+          [disabled]="vm.product.stockQuantity === 0"
+        > Buy Now</button>
+        <button
+          type="button"
+          class="pdp-btn pdp-btn--wish"
+          (click)="toggleWishlist()"
+        >{{ vm.product.wishlisted ? ' Wishlisted' : ' Wishlist' }}</button>
+        <hr class="pdp-buybox__divider" />
+        <dl class="pdp-buybox__info">
+          <dt>Sold by</dt><dd>{{ vm.product.sellerName }}</dd>
+          <dt>Returns</dt><dd>{{ vm.returnPolicy }}</dd>
+          <dt>Ships via</dt><dd>{{ vm.shippingPartners }}</dd>
+        </dl>
+        <p class="pdp-secure"> Secure &amp; encrypted payment</p>
+      </aside>
+    </div>
+
+    <!-- Bottom sections -->
+    <div class="pdp-bottom">
+      <section class="pdp-section">
+        <h2 class="pdp-section__heading">About the Seller</h2>
+        <p class="pdp-section__text">{{ vm.sellerDescription }}</p>
+      </section>
+
+      <section class="pdp-section pdp-reviews">
+        <h2 class="pdp-section__heading">Customer Reviews</h2>
+        <div class="pdp-reviews__summary">
+          <span class="pdp-reviews__big-rating">{{ vm.product.ratingAverage | number:'1.1-1' }}</span>
+          <div class="pdp-stars pdp-stars--lg" aria-hidden="true">
+            @for (star of getStars(vm.product.ratingAverage); track $index) {
+              <span class="pdp-star" [class.pdp-star--full]="star==='full'" [class.pdp-star--half]="star==='half'"></span>
+            }
+          </div>
+          <span class="pdp-reviews__count">{{ vm.product.reviewCount | number }} global ratings</span>
+        </div>
+
+        @if (vm.reviews.length > 0) {
+          <div class="pdp-reviews__list">
+            @for (review of vm.reviews; track review.id) {
+              <article class="pdp-review-card">
+                <div class="pdp-review-card__header">
+                  <div class="pdp-review-card__avatar" aria-hidden="true">{{ review.customerName[0] }}</div>
+                  <div class="pdp-review-card__meta">
+                    <p class="pdp-review-card__name">{{ review.customerName }}</p>
+                    <div class="pdp-stars pdp-stars--sm" aria-hidden="true">
+                      @for (star of getStars(review.rating); track $index) {
+                        <span class="pdp-star" [class.pdp-star--full]="star==='full'" [class.pdp-star--half]="star==='half'"></span>
+                      }
+                    </div>
+                  </div>
+                  <span class="pdp-review-card__date">{{ review.createdAt | date:'mediumDate' }}</span>
+                </div>
+                <p class="pdp-review-card__text">{{ review.reviewText || 'Verified buyer.' }}</p>
+                @if (review.replyText) {
+                  <div class="pdp-review-card__reply"><strong>Seller reply:</strong> {{ review.replyText }}</div>
+                }
+              </article>
+            }
+          </div>
+        } @else {
+          <p class="pdp-reviews__empty"> Be the first to review this product.</p>
+        }
+      </section>
+    </div>
+  }
+
+  <!-- ======== Home JSON product (fallback) ======== -->
+  @if (!loading() && !error() && homeProduct(); as hp) {
+    <nav class="pdp-breadcrumb" aria-label="Breadcrumb">
+      <a routerLink="/home">Home</a>
+      <span aria-hidden="true">/</span>
+      <a routerLink="/home">{{ hp.category }}</a>
+      <span aria-hidden="true">/</span>
+      <span class="pdp-breadcrumb__current">{{ hp.name }}</span>
+    </nav>
+
+    <div class="pdp-layout">
+
+      <!-- Gallery (emoji) -->
+      <aside class="pdp-gallery" aria-label="Product image">
+        <div class="pdp-gallery__main pdp-gallery__main--emoji">
+          <span class="pdp-gallery__emoji" role="img" [attr.aria-label]="hp.name">{{ hp.icon }}</span>
+        </div>
+        <div class="pdp-gallery__badge">
+          <span class="pdp-temple-badge"> From Nearby Temple Shop</span>
+        </div>
+      </aside>
+
+      <!-- Product Info -->
+      <main class="pdp-info">
+        <div class="pdp-category-tag">{{ hp.category }}</div>
+        <h1 class="pdp-title">{{ hp.name }}</h1>
+        <p class="pdp-sold-by">
+          Sold by&nbsp;<a class="pdp-sold-by__link" routerLink="/home">{{ hp.sellerName }}</a>
+        </p>
+
+        <!-- Rating -->
+        <div class="pdp-rating-row" role="group" aria-label="Product rating">
+          <div class="pdp-stars" aria-hidden="true">
+            @for (star of getStars(hp.rating); track $index) {
+              <span class="pdp-star" [class.pdp-star--full]="star==='full'" [class.pdp-star--half]="star==='half'"></span>
+            }
+          </div>
+          <span class="pdp-rating-val">{{ hp.rating | number:'1.1-1' }}</span>
+          <span class="pdp-rating-sep" aria-hidden="true"></span>
+          <span class="pdp-rating-count">{{ hp.reviews | number }} ratings</span>
+        </div>
+
+        <hr class="pdp-divider" />
+
+        <!-- Price -->
+        <div class="pdp-price-block">
+          @if (hp.discount > 0) {
+            <p class="pdp-mrp">M.R.P.:&nbsp;<s>₹{{ hp.originalPrice | number }}</s></p>
+          }
+          <div class="pdp-price-row">
+            <span class="pdp-price">₹{{ hp.price | number }}</span>
+            @if (hp.discount > 0) {
+              <span class="pdp-discount-badge">{{ hp.discount }}% off</span>
+            }
+          </div>
+          @if (hp.discount > 0) {
+            <p class="pdp-save">You save: ₹{{ hp.originalPrice - hp.price | number }}</p>
+          }
+          <p class="pdp-tax-note">Inclusive of all taxes</p>
+        </div>
+
+        <!-- Stock -->
+        <div class="pdp-meta-strip">
+          @if (hp.inStock) {
+            <span class="pdp-badge pdp-badge--green"> In Stock</span>
+          } @else {
+            <span class="pdp-badge pdp-badge--red"> Out of Stock</span>
+          }
+          <span class="pdp-delivery">
+            <span aria-hidden="true"></span>
+            FREE delivery on orders above ₹499
+          </span>
+        </div>
+
+        <!-- Description -->
+        <div class="pdp-desc">
+          <h2 class="pdp-desc__heading">About this product</h2>
+          <p class="pdp-desc__text">
+            Authentic and pure {{ hp.name }} from trusted temple sources. This {{ hp.category }} item is
+            carefully selected to ensure the highest quality for your daily puja and spiritual practices,
+            sourced directly from {{ hp.sellerName }}, a certified temple shop partner.
+          </p>
+          <ul class="pdp-desc__bullets">
+            <li> Authentic temple-grade quality</li>
+            <li> Sourced from certified temple shops</li>
+            <li> Fast delivery with secure packaging</li>
+            <li> 7-day hassle-free returns</li>
+            <li> Secure online payment</li>
+          </ul>
+        </div>
+      </main>
+
+      <!-- Buy Box -->
+      <aside class="pdp-buybox" aria-label="Purchase options">
+        <div class="pdp-buybox__price">₹{{ hp.price | number }}</div>
+        @if (hp.discount > 0) {
+          <p class="pdp-buybox__discount">{{ hp.discount }}% off  Save ₹{{ hp.originalPrice - hp.price | number }}</p>
+        }
+        <div class="pdp-buybox__delivery">
+          <span aria-hidden="true"></span> FREE Delivery
+          <span class="pdp-buybox__delivery-note">on orders above ₹499</span>
+        </div>
+        @if (hp.inStock) {
+          <p class="pdp-buybox__stock"> In Stock</p>
+        } @else {
+          <p class="pdp-buybox__stock pdp-buybox__stock--oos"> Out of Stock</p>
+        }
+        <div class="pdp-buybox__qty">
+          <label for="qty-hp">Qty:</label>
+          <select id="qty-hp" [(ngModel)]="quantity">
+            @for (n of [1,2,3,4,5,6,7,8,9,10]; track n) {
+              <option [value]="n">{{ n }}</option>
+            }
+          </select>
+        </div>
+        <button
+          type="button"
+          class="pdp-btn pdp-btn--cart"
+          [disabled]="!hp.inStock"
+          (click)="addToCart()"
+        > Add to Cart</button>
+        <button
+          type="button"
+          class="pdp-btn pdp-btn--buy"
+          [disabled]="!hp.inStock"
+        > Buy Now</button>
+        <button type="button" class="pdp-btn pdp-btn--wish"> Wishlist</button>
+        <hr class="pdp-buybox__divider" />
+        <dl class="pdp-buybox__info">
+          <dt>Sold by</dt><dd>{{ hp.sellerName }}</dd>
+          <dt>Returns</dt><dd>7-day return policy</dd>
+          <dt>Delivery</dt><dd>3–5 business days</dd>
+        </dl>
+        <p class="pdp-secure"> Secure &amp; encrypted payment</p>
+      </aside>
+    </div>
+
+    <!-- Reviews placeholder -->
+    <div class="pdp-bottom">
+      <section class="pdp-section pdp-reviews">
+        <h2 class="pdp-section__heading">Customer Reviews</h2>
+        <div class="pdp-reviews__summary">
+          <span class="pdp-reviews__big-rating">{{ hp.rating | number:'1.1-1' }}</span>
+          <div class="pdp-stars pdp-stars--lg" aria-hidden="true">
+            @for (star of getStars(hp.rating); track $index) {
+              <span class="pdp-star" [class.pdp-star--full]="star==='full'" [class.pdp-star--half]="star==='half'"></span>
+            }
+          </div>
+          <span class="pdp-reviews__count">{{ hp.reviews | number }} verified ratings</span>
+        </div>
+        <p class="pdp-reviews__empty"> Detailed reviews coming soon.</p>
+      </section>
+    </div>
+  }
+
+</div>

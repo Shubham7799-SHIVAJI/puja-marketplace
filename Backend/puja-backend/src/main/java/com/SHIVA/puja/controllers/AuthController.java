@@ -6,10 +6,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import com.SHIVA.puja.dto.LoginRequest;
+import com.SHIVA.puja.dto.RefreshTokenRequest;
 import com.SHIVA.puja.dto.ResendOtpRequest;
 import com.SHIVA.puja.dto.SetPasswordRequest;
 import com.SHIVA.puja.dto.SignInRequest;
 import com.SHIVA.puja.dto.VerifyOtpRequest;
+import com.SHIVA.puja.dto.AuthTokenResponse;
 import com.SHIVA.puja.service.UserService;
 
 @RestController
@@ -69,13 +71,21 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public Map<String, String> signIn(@Valid @RequestBody SignInRequest request) {
+    public AuthTokenResponse signIn(@Valid @RequestBody SignInRequest request) {
+        return userService.signIn(request);
+    }
 
-        userService.signIn(request);
+    @PostMapping("/refresh")
+    public AuthTokenResponse refresh(@Valid @RequestBody RefreshTokenRequest request) {
+        return userService.refreshAccessToken(request.getRefreshToken());
+    }
+
+    @PostMapping("/logout")
+    public Map<String, String> logout(@Valid @RequestBody RefreshTokenRequest request) {
+        userService.revokeRefreshToken(request.getRefreshToken());
 
         Map<String, String> response = new HashMap<>();
-        response.put("message", "Sign-in successful");
-
+        response.put("message", "Signed out successfully");
         return response;
     }
 

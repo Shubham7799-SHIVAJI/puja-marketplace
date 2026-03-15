@@ -11,6 +11,7 @@ import { AUTH_FLOW_TEXT } from '../../shared/constants/Authentication-flow.const
 import { AuthService } from '../../shared/services/auth';
 import { firstValueFrom } from 'rxjs';
 import { SecureQueryStateService } from '../../shared/services/secure-query-state';
+import { AuthSessionService } from '../../shared/services/auth-session';
 
 @Component({
   standalone: true,
@@ -33,6 +34,7 @@ export class SignInPage implements OnInit {
     private router: Router,
     private authService: AuthService,
     private secureQueryStateService: SecureQueryStateService,
+    private authSessionService: AuthSessionService,
   ) {}
 
   ngOnInit() {
@@ -65,8 +67,26 @@ export class SignInPage implements OnInit {
     const password = this.signInForm.value.password as string;
 
     try {
-      await firstValueFrom(this.authService.signin(contact, password));
-      await this.router.navigate(['/home']);
+      const response = await firstValueFrom(this.authService.signin(contact, password));
+
+      if (response.token) {
+        this.authSessionService.save({
+          token: response.token,
+          refreshToken: response.refreshToken,
+          email: response.email,
+          role: response.role,
+          expiresInMinutes: response.expiresInMinutes,
+          refreshExpiresInDays: response.refreshExpiresInDays,
+        });
+      }
+
+      if (response.role === 'ADMIN') {
+        await this.router.navigate(['/admin-dashboard']);
+      } else if (response.role === 'SELLER') {
+        await this.router.navigate(['/seller-dashboard']);
+      } else {
+        await this.router.navigate(['/home']);
+      }
     } catch (error) {
       this.fieldBackendErrors = this.authService.getFieldErrors(error);
       this.backendError = this.authService.getFriendlyErrorMessage(error, this.text.requestFailedMessage);

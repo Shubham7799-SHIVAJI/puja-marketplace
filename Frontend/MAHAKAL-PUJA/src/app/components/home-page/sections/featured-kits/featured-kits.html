@@ -1,0 +1,46 @@
+<section class="kits-section">
+  <div class="section-header">
+    <div class="section-label">Curated with Devotion</div>
+    <h2>Featured Puja Kits</h2>
+    <p>Complete, authentic kits for every occasion — handpicked from trusted temple suppliers</p>
+  </div>
+
+  <div class="kits-grid">
+    @for (kit of kits(); track kit.id) {
+      <article class="kit-card" [style.--kit-color]="kit.color">
+        <div class="kit-icon-wrap">
+          <span class="kit-icon">{{ kit.icon }}</span>
+        </div>
+        <div class="kit-body">
+          <h3 class="kit-name">{{ kit.name }}</h3>
+          <p class="kit-desc">{{ kit.description }}</p>
+
+          <div class="kit-rating">
+            <div class="stars">
+              @for (star of getStars(kit.rating); track $index) {
+                <span class="star" [class.star--full]="star === 'full'" [class.star--half]="star === 'half'">★</span>
+              }
+            </div>
+            <span class="review-count">({{ kit.reviews | number }})</span>
+          </div>
+
+          <div class="kit-items">
+            @for (item of kit.items.slice(0, 4); track item) {
+              <span class="kit-item-tag">{{ item }}</span>
+            }
+            @if (kit.items.length > 4) {
+              <span class="kit-item-tag kit-item-tag--more">+{{ kit.items.length - 4 }} more</span>
+            }
+          </div>
+
+          <div class="kit-pricing">
+            <span class="kit-price">₹{{ kit.price }}</span>
+            <span class="kit-original">₹{{ kit.originalPrice }}</span>
+            <span class="kit-badge">{{ kit.discount }}% OFF</span>
+          </div>
+        </div>
+        <button class="kit-cta" type="button">Add to Cart</button>
+      </article>
+    }
+  </div>
+</section>

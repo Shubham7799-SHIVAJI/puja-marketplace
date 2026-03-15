@@ -1,0 +1,45 @@
+<section class="chart-card">
+  <header>
+    <p class="chart-card__eyebrow">Analytics</p>
+    <h3>{{ title }}</h3>
+    <p>{{ subtitle }}</p>
+  </header>
+
+  <ng-container [ngSwitch]="mode">
+    <div class="bar-chart" *ngSwitchCase="'bar'">
+      <div class="bar-chart__item" *ngFor="let point of data">
+        <div class="bar-chart__column">
+          <span [style.height.%]="(point.value / maxValue) * 100"></span>
+        </div>
+        <strong>{{ point.value }}</strong>
+        <small>{{ point.label }}</small>
+      </div>
+    </div>
+
+    <div class="line-chart" *ngSwitchDefault>
+      <svg viewBox="0 0 320 180" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="rgba(15, 95, 122, 0.35)" />
+            <stop offset="100%" stop-color="rgba(15, 95, 122, 0.02)" />
+          </linearGradient>
+        </defs>
+
+        <polyline class="line-chart__area" [attr.points]="areaPoints"></polyline>
+        <polyline class="line-chart__line" [attr.points]="polylinePoints"></polyline>
+        <circle *ngFor="let point of data; let index = index"
+          class="line-chart__dot"
+          [attr.cx]="data.length === 1 ? 20 : (index / (data.length - 1)) * 280 + 20"
+          [attr.cy]="150 - (point.value / maxValue) * 110"
+          r="4"></circle>
+      </svg>
+
+      <div class="line-chart__labels">
+        <div *ngFor="let point of data">
+          <strong>{{ point.value }}</strong>
+          <small>{{ point.label }}</small>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</section>

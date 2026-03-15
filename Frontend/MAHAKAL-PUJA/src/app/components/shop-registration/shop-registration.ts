@@ -16,6 +16,15 @@ import { debounceTime, finalize, firstValueFrom } from 'rxjs';
 
 import { FileUploadField } from '../../shared/components/file-upload-field/file-upload-field';
 import {
+  SHOP_REGISTRATION_DRAFT_STORAGE_KEY,
+  SHOP_REGISTRATION_STEPS,
+  SHOP_REGISTRATION_TEXT,
+  SHOP_REGISTRATION_UPLOAD_RULES,
+  SHOP_CATEGORIES,
+  INDIAN_STATES,
+  type UploadFieldName,
+} from '../../shared/constants/shop-registration.constants';
+import {
   ShopFileUploadResponse,
   ShopOtpResponse,
   ShopRegistrationPayload,
@@ -39,22 +48,8 @@ interface UploadState {
   error: string;
 }
 
-type UploadFieldName =
-  | 'profilePhoto'
-  | 'ownerAadharPhoto'
-  | 'ownerPanPhoto'
-  | 'ownerSelfieWithId'
-  | 'gstCertificateUpload'
-  | 'cancelledChequePhoto';
-
 type UploadStateMap = {
   [key in UploadFieldName]: UploadState;
-};
-
-type UploadRule = {
-  accept: string;
-  allowedTypes: string[];
-  errorMessage: string;
 };
 
 type OtpChannel = 'EMAIL' | 'PHONE';
@@ -75,25 +70,6 @@ const PAN_PATTERN = /^[A-Z]{5}[0-9]{4}[A-Z]$/;
 const GST_PATTERN = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][A-Z0-9]{3}$/;
 const IFSC_PATTERN = /^[A-Z]{4}0[A-Z0-9]{6}$/;
 const UPI_PATTERN = /^[A-Za-z0-9.\-_]{2,256}@[A-Za-z]{2,64}$/;
-const DRAFT_STORAGE_KEY = 'shop-registration-draft-id';
-const IMAGE_UPLOAD_RULE: UploadRule = {
-  accept: 'image/jpeg,image/png,image/webp',
-  allowedTypes: ['image/jpeg', 'image/png', 'image/webp'],
-  errorMessage: 'Only JPG, PNG, and WEBP images are allowed.',
-};
-const DOCUMENT_UPLOAD_RULE: UploadRule = {
-  accept: '.pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  allowedTypes: ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-  errorMessage: 'Only PDF and DOCX files are allowed.',
-};
-const UPLOAD_RULES: Record<UploadFieldName, UploadRule> = {
-  profilePhoto: IMAGE_UPLOAD_RULE,
-  ownerAadharPhoto: IMAGE_UPLOAD_RULE,
-  ownerPanPhoto: IMAGE_UPLOAD_RULE,
-  ownerSelfieWithId: IMAGE_UPLOAD_RULE,
-  gstCertificateUpload: DOCUMENT_UPLOAD_RULE,
-  cancelledChequePhoto: IMAGE_UPLOAD_RULE,
-};
 
 function noWhitespaceValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -150,71 +126,11 @@ export class ShopRegistration implements OnInit {
   private readonly shopRegistrationService = inject(ShopRegistrationService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly steps: StepDefinition[] = [
-    {
-      label: 'Account Details',
-      caption: 'Step 1',
-      groupName: 'accountDetails',
-      description: 'Owner identity, login credentials, OTP references, and profile photo.',
-    },
-    {
-      label: 'Shop Information',
-      caption: 'Step 2',
-      groupName: 'shopInformation',
-      description: 'Primary branding, category, and business description.',
-    },
-    {
-      label: 'Address',
-      caption: 'Step 3',
-      groupName: 'address',
-      description: 'Precise location and geographical coordinates for discoverability.',
-    },
-    {
-      label: 'Contact Details',
-      caption: 'Step 4',
-      groupName: 'contactDetails',
-      description: 'Customer-facing email, phone, and WhatsApp channels.',
-    },
-    {
-      label: 'KYC Verification',
-      caption: 'Step 5',
-      groupName: 'kycVerification',
-      description: 'Identity proof, tax details, and statutory verification uploads.',
-    },
-    {
-      label: 'Bank Details',
-      caption: 'Step 6',
-      groupName: 'bankDetails',
-      description: 'Settlement information for payouts and reconciliation.',
-    },
-    {
-      label: 'Policies & Consent',
-      caption: 'Step 8',
-      groupName: 'policies',
-      description: 'Final declarations, policy acceptance, and application submission.',
-    },
-  ];
-
-  readonly shopCategories = [
-    'Puja Samagri',
-    'Temple Decor',
-    'Flowers & Garlands',
-    'Ayurveda & Wellness',
-    'Jewellery',
-    'Handicrafts',
-    'Groceries',
-    'Books & Spiritual Media',
-    'Food & Sweets',
-    'Clothing & Textiles',
-  ];
-
-  readonly indianStates = [
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat',
-    'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh',
-    'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
-    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura', 'Uttar Pradesh',
-    'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu and Kashmir', 'Ladakh', 'Puducherry',
-  ];
+  readonly text = SHOP_REGISTRATION_TEXT;
+  readonly steps: StepDefinition[] = [...SHOP_REGISTRATION_STEPS];
+  readonly shopCategories = [...SHOP_CATEGORIES];
+  readonly indianStates = [...INDIAN_STATES];
+  readonly indianBanks = [...SHOP_REGISTRATION_TEXT.banks];
 
   readonly form = this.fb.group({
     accountDetails: this.fb.group(
@@ -311,7 +227,7 @@ export class ShopRegistration implements OnInit {
   };
 
   ngOnInit(): void {
-    const storedDraftId = localStorage.getItem(DRAFT_STORAGE_KEY);
+    const storedDraftId = localStorage.getItem(SHOP_REGISTRATION_DRAFT_STORAGE_KEY);
     if (storedDraftId) {
       this.loadDraft(storedDraftId);
     }
@@ -407,13 +323,13 @@ export class ShopRegistration implements OnInit {
       }));
 
       this.registrationId = response.registrationId;
-      localStorage.setItem(DRAFT_STORAGE_KEY, response.registrationId);
+      localStorage.setItem(SHOP_REGISTRATION_DRAFT_STORAGE_KEY, response.registrationId);
       otpState.message = response.message;
       otpState.previewOtp = response.previewOtp ?? '';
       otpState.verified = false;
       this.setOtpVerified(channel, false);
     } catch (error) {
-      otpState.error = this.shopRegistrationService.getFriendlyErrorMessage(error, 'Unable to send OTP right now.');
+      otpState.error = this.shopRegistrationService.getFriendlyErrorMessage(error, this.text.messages.sendOtpFailed);
     } finally {
       otpState.sending = false;
     }
@@ -445,13 +361,13 @@ export class ShopRegistration implements OnInit {
       }));
 
       this.registrationId = response.registrationId;
-      localStorage.setItem(DRAFT_STORAGE_KEY, response.registrationId);
+      localStorage.setItem(SHOP_REGISTRATION_DRAFT_STORAGE_KEY, response.registrationId);
       otpState.message = response.message;
       otpState.previewOtp = '';
       otpState.verified = true;
       this.setOtpVerified(channel, true);
     } catch (error) {
-      otpState.error = this.shopRegistrationService.getFriendlyErrorMessage(error, 'Unable to verify OTP right now.');
+      otpState.error = this.shopRegistrationService.getFriendlyErrorMessage(error, this.text.messages.verifyOtpFailed);
       this.setOtpVerified(channel, false);
     } finally {
       otpState.verifying = false;
@@ -468,7 +384,7 @@ export class ShopRegistration implements OnInit {
     }
 
     if (this.submitted && this.control('accountDetails')?.hasError('otpVerificationRequired')) {
-      return 'Verify either email OTP or phone OTP before continuing.';
+      return this.text.messages.otpVerificationRequired;
     }
 
     return '';
@@ -494,15 +410,15 @@ export class ShopRegistration implements OnInit {
       const response = await firstValueFrom(this.shopRegistrationService.submit(this.buildPayload()));
       this.applyServerState(response);
       this.saveState = 'saved';
-      this.lastSavedAtLabel = 'Application submitted';
-      localStorage.removeItem(DRAFT_STORAGE_KEY);
+      this.lastSavedAtLabel = this.text.messages.applicationSubmitted;
+      localStorage.removeItem(SHOP_REGISTRATION_DRAFT_STORAGE_KEY);
       this.form.markAsPristine();
       await this.router.navigate(['/shop-dashboard', response.registrationId]);
     } catch (error) {
       this.fieldBackendErrors = this.shopRegistrationService.getFieldErrors(error);
       this.backendError = this.shopRegistrationService.getFriendlyErrorMessage(
         error,
-        'Unable to submit the application right now.',
+        this.text.messages.submitFailed,
       );
       const firstBackendField = Object.keys(this.fieldBackendErrors)[0];
       const firstInvalidIndex = this.findStepIndexByField(firstBackendField);
@@ -556,7 +472,7 @@ export class ShopRegistration implements OnInit {
             uploadState.uploaded = false;
             uploadState.error = this.shopRegistrationService.getFriendlyErrorMessage(
               error,
-              'Unable to upload the file right now.',
+              this.text.messages.uploadFailed,
             );
             reject(error);
           },
@@ -599,15 +515,15 @@ export class ShopRegistration implements OnInit {
     }
 
     if (path.startsWith('accountDetails.') && this.control('accountDetails')?.hasError('passwordMismatch')) {
-      return 'Passwords do not match.';
+      return this.text.messages.passwordsDoNotMatch;
     }
 
     if (path.startsWith('accountDetails.') && this.control('accountDetails')?.hasError('otpVerificationRequired')) {
-      return 'Verify either email OTP or phone OTP before continuing.';
+      return this.text.messages.otpVerificationRequired;
     }
 
     if (path.startsWith('bankDetails.') && this.control('bankDetails')?.hasError('accountMismatch')) {
-      return 'Account numbers do not match.';
+      return this.text.messages.accountNumbersDoNotMatch;
     }
 
     if (
@@ -615,7 +531,7 @@ export class ShopRegistration implements OnInit {
       && backendField === 'gstCertificateUpload'
       && this.control('kycVerification')?.hasError('gstCertificateRequired')
     ) {
-      return 'GST certificate is required when GST number is provided.';
+      return this.text.messages.gstCertificateRequired;
     }
 
     const control = this.control(path);
@@ -634,7 +550,7 @@ export class ShopRegistration implements OnInit {
     }
 
     if (errors['email']) {
-      return 'Enter a valid email address.';
+      return this.text.messages.invalidEmail;
     }
 
     if (errors['pattern']) {
@@ -646,18 +562,18 @@ export class ShopRegistration implements OnInit {
     }
 
     if (errors['passwordMismatch']) {
-      return 'Passwords do not match.';
+      return this.text.messages.passwordsDoNotMatch;
     }
 
     if (errors['accountMismatch']) {
-      return 'Account numbers do not match.';
+      return this.text.messages.accountNumbersDoNotMatch;
     }
 
     if (errors['gstCertificateRequired']) {
-      return 'GST certificate is required when GST number is provided.';
+      return this.text.messages.gstCertificateRequired;
     }
 
-    return `Please review ${label.toLowerCase()}.`;
+    return this.text.messages.genericReview.replace('{label}', label.toLowerCase());
   }
 
   private async saveDraft(isAutoSave: boolean): Promise<void> {
@@ -679,7 +595,7 @@ export class ShopRegistration implements OnInit {
       if (!isAutoSave) {
         this.backendError = this.shopRegistrationService.getFriendlyErrorMessage(
           error,
-          'Unable to save the shop registration draft right now.',
+          this.text.messages.saveDraftFailed,
         );
       }
     }
@@ -705,7 +621,7 @@ export class ShopRegistration implements OnInit {
           this.form.markAsPristine();
         },
         error: () => {
-          localStorage.removeItem(DRAFT_STORAGE_KEY);
+          localStorage.removeItem(SHOP_REGISTRATION_DRAFT_STORAGE_KEY);
         },
         complete: () => {
           this.restoringDraft = false;
@@ -739,7 +655,7 @@ export class ShopRegistration implements OnInit {
         city: response.city ?? '',
         state: response.state ?? '',
         pincode: response.pincode ?? '',
-        country: response.country ?? 'India',
+        country: response.country ?? this.text.defaults.country,
         landmark: response.landmark ?? '',
         latitude: response.latitude,
         longitude: response.longitude,
@@ -783,11 +699,11 @@ export class ShopRegistration implements OnInit {
     this.restoreFileState('cancelledChequePhoto', response.cancelledChequePhoto);
 
     this.otpStates.EMAIL.verified = !!response.emailOtpVerified;
-    this.otpStates.EMAIL.message = response.emailOtpVerified ? 'Email verified.' : '';
+    this.otpStates.EMAIL.message = response.emailOtpVerified ? this.text.accountDetails.emailVerified : '';
     this.otpStates.EMAIL.previewOtp = '';
     this.otpStates.EMAIL.error = '';
     this.otpStates.PHONE.verified = !!response.phoneOtpVerified;
-    this.otpStates.PHONE.message = response.phoneOtpVerified ? 'Phone verified.' : '';
+    this.otpStates.PHONE.message = response.phoneOtpVerified ? this.text.accountDetails.phoneVerified : '';
     this.otpStates.PHONE.previewOtp = '';
     this.otpStates.PHONE.error = '';
   }
@@ -810,14 +726,14 @@ export class ShopRegistration implements OnInit {
 
   private applyServerState(response: ShopRegistrationResponse): void {
     this.registrationId = response.registrationId;
-    localStorage.setItem(DRAFT_STORAGE_KEY, response.registrationId);
+    localStorage.setItem(SHOP_REGISTRATION_DRAFT_STORAGE_KEY, response.registrationId);
     this.currentStepIndex = Math.min(Math.max((response.currentStep ?? 1) - 1, 0), this.steps.length - 1);
     this.getShopUniqueIdControl().setValue(response.shopUniqueId ?? '');
     this.setOtpVerified('EMAIL', !!response.emailOtpVerified);
     this.setOtpVerified('PHONE', !!response.phoneOtpVerified);
     this.lastSavedAtLabel = response.lastSavedAt
-      ? `Saved ${new Date(response.lastSavedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
-      : 'Saved just now';
+      ? `${this.text.messages.savedAtPrefix} ${new Date(response.lastSavedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+      : this.text.messages.savedJustNow;
   }
 
   private applyUploadResponse(
@@ -827,7 +743,7 @@ export class ShopRegistration implements OnInit {
     localPreview: string | null,
   ): void {
     this.registrationId = response.registrationId;
-    localStorage.setItem(DRAFT_STORAGE_KEY, response.registrationId);
+    localStorage.setItem(SHOP_REGISTRATION_DRAFT_STORAGE_KEY, response.registrationId);
     this.getShopUniqueIdControl().setValue(response.shopUniqueId);
 
     const uploadState = this.uploadStates[fieldName];
@@ -864,7 +780,7 @@ export class ShopRegistration implements OnInit {
       city: rawValue.address.city ?? '',
       state: rawValue.address.state ?? '',
       pincode: rawValue.address.pincode ?? '',
-      country: rawValue.address.country ?? 'India',
+      country: rawValue.address.country ?? this.text.defaults.country,
       landmark: rawValue.address.landmark ?? '',
       latitude: rawValue.address.latitude,
       longitude: rawValue.address.longitude,
@@ -896,7 +812,7 @@ export class ShopRegistration implements OnInit {
     const payload = this.buildPayload();
     return Object.entries(payload).some(([key, value]) => {
       if (key === 'registrationId' || key === 'currentStep' || key === 'country') {
-        return !!value && value !== 'India';
+        return !!value && value !== this.text.defaults.country;
       }
 
       if (typeof value === 'boolean') {
@@ -912,17 +828,17 @@ export class ShopRegistration implements OnInit {
   }
 
   uploadAccept(fieldName: UploadFieldName): string {
-    return UPLOAD_RULES[fieldName].accept;
+    return SHOP_REGISTRATION_UPLOAD_RULES[fieldName].accept;
   }
 
   private validateFile(fieldName: UploadFieldName, file: File): string {
-    const rule = UPLOAD_RULES[fieldName];
+    const rule = SHOP_REGISTRATION_UPLOAD_RULES[fieldName];
     if (!rule.allowedTypes.includes(file.type)) {
       return rule.errorMessage;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      return 'File size must be 5 MB or smaller.';
+      return this.text.messages.fileSizeExceeded;
     }
 
     return '';
@@ -976,7 +892,7 @@ export class ShopRegistration implements OnInit {
 
   private updateSaveTimestampLabel(): void {
     if (!this.lastSavedAtLabel) {
-      this.lastSavedAtLabel = 'Draft updated';
+      this.lastSavedAtLabel = this.text.messages.draftUpdated;
     }
   }
 

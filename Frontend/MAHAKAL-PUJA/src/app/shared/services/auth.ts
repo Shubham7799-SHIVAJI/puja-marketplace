@@ -45,6 +45,12 @@ export interface SigninRequest {
 }
 
 export interface SigninResponse {
+  token: string;
+  refreshToken: string;
+  email: string;
+  role: string;
+  expiresInMinutes: number;
+  refreshExpiresInDays: number;
   message: string;
 }
 
