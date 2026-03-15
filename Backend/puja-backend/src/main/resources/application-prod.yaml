@@ -1,0 +1,22 @@
+spring:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql.BasicBinder: WARN
+
+server:
+  forward-headers-strategy: framework
+
+app:
+  payment:
+    key-id: ${RAZORPAY_KEY_ID:}
+    key-secret: ${RAZORPAY_KEY_SECRET:}
+    webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
+    currency: ${PAYMENT_CURRENCY:INR}
+    kafka-payment-topic: ${KAFKA_PAYMENT_TOPIC:marketplace.payments.v1}
+    kafka-order-topic: ${KAFKA_ORDER_TOPIC:marketplace.orders.v1}

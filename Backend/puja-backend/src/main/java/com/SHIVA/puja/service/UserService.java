@@ -13,7 +13,7 @@ public interface UserService {
 
     void resendEmailOtp(ResendOtpRequest request);
 
-    void verifyEmailOtp(VerifyOtpRequest request);
+    String verifyEmailOtp(VerifyOtpRequest request);
 
     void setPassword(SetPasswordRequest request);
 
@@ -22,5 +22,7 @@ public interface UserService {
     AuthTokenResponse refreshAccessToken(String refreshToken);
 
     void revokeRefreshToken(String refreshToken);
+
+    void blacklistAccessToken(String token);
 
 }

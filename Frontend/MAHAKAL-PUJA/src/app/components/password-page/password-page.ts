@@ -93,8 +93,16 @@ export class PasswordPage implements OnInit {
       return;
     }
 
+    if (!context.resetToken) {
+      this.backendError = 'Password reset session is missing. Please verify OTP again.';
+      this.otpSecurityContextService.clearContext();
+      this.isSubmitting = false;
+      await this.router.navigate(['/signin']);
+      return;
+    }
+
     try {
-      await firstValueFrom(this.authService.setPassword(email, password, confirmPassword));
+      await firstValueFrom(this.authService.setPassword(email, password, confirmPassword, context.resetToken));
       this.otpSecurityContextService.clearContext();
       await this.router.navigate(['/home']);
     } catch (error) {

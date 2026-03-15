@@ -5,11 +5,13 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,6 +38,7 @@ import com.SHIVA.puja.dto.SupportTicketResponse;
 import com.SHIVA.puja.entity.CouponCampaign;
 import com.SHIVA.puja.entity.CustomerProfile;
 import com.SHIVA.puja.entity.InventoryItem;
+import com.SHIVA.puja.entity.OrderStatusHistory;
 import com.SHIVA.puja.entity.Product;
 import com.SHIVA.puja.entity.ProductImage;
 import com.SHIVA.puja.entity.ProductVariant;
@@ -47,6 +50,7 @@ import com.SHIVA.puja.exception.ApiException;
 import com.SHIVA.puja.repository.CouponCampaignRepository;
 import com.SHIVA.puja.repository.CustomerProfileRepository;
 import com.SHIVA.puja.repository.InventoryItemRepository;
+import com.SHIVA.puja.repository.OrderStatusHistoryRepository;
 import com.SHIVA.puja.repository.ProductImageRepository;
 import com.SHIVA.puja.repository.ProductRepository;
 import com.SHIVA.puja.repository.ProductVariantRepository;
@@ -60,6 +64,19 @@ import com.SHIVA.puja.service.SellerCrudService;
 @Transactional
 public class SellerCrudServiceImpl implements SellerCrudService {
 
+    private static final Set<String> ORDER_STATUSES = Set.of("PENDING", "CONFIRMED", "PACKED", "SHIPPED", "DELIVERED", "CANCELLED", "RETURNED");
+    private static final Map<String, Set<String>> ORDER_STATUS_TRANSITIONS = new HashMap<>();
+
+    static {
+        ORDER_STATUS_TRANSITIONS.put("PENDING", Set.of("CONFIRMED", "CANCELLED"));
+        ORDER_STATUS_TRANSITIONS.put("CONFIRMED", Set.of("PACKED", "CANCELLED"));
+        ORDER_STATUS_TRANSITIONS.put("PACKED", Set.of("SHIPPED", "CANCELLED"));
+        ORDER_STATUS_TRANSITIONS.put("SHIPPED", Set.of("DELIVERED", "RETURNED"));
+        ORDER_STATUS_TRANSITIONS.put("DELIVERED", Set.of("RETURNED"));
+        ORDER_STATUS_TRANSITIONS.put("CANCELLED", Set.of());
+        ORDER_STATUS_TRANSITIONS.put("RETURNED", Set.of());
+    }
+
     private final SellerAccessService sellerAccessService;
     private final ProductRepository productRepository;
     private final ProductImageRepository productImageRepository;
@@ -70,6 +87,7 @@ public class SellerCrudServiceImpl implements SellerCrudService {
     private final ReviewEntryRepository reviewEntryRepository;
     private final SupportTicketRepository supportTicketRepository;
     private final CustomerProfileRepository customerProfileRepository;
+    private final OrderStatusHistoryRepository orderStatusHistoryRepository;
 
     public SellerCrudServiceImpl(
             SellerAccessService sellerAccessService,
@@ -81,7 +99,8 @@ public class SellerCrudServiceImpl implements SellerCrudService {
             CouponCampaignRepository couponCampaignRepository,
             ReviewEntryRepository reviewEntryRepository,
             SupportTicketRepository supportTicketRepository,
-            CustomerProfileRepository customerProfileRepository) {
+            CustomerProfileRepository customerProfileRepository,
+            OrderStatusHistoryRepository orderStatusHistoryRepository) {
         this.sellerAccessService = sellerAccessService;
         this.productRepository = productRepository;
         this.productImageRepository = productImageRepository;
@@ -92,6 +111,7 @@ public class SellerCrudServiceImpl implements SellerCrudService {
         this.reviewEntryRepository = reviewEntryRepository;
         this.supportTicketRepository = supportTicketRepository;
         this.customerProfileRepository = customerProfileRepository;
+        this.orderStatusHistoryRepository = orderStatusHistoryRepository;
     }
 
     @Override
@@ -267,6 +287,7 @@ public class SellerCrudServiceImpl implements SellerCrudService {
         applyOrder(order, request);
         order.setOrderDate(LocalDateTime.now());
         SellerOrder saved = sellerOrderRepository.save(order);
+        recordOrderStatusChange(saved.getId(), null, saved.getOrderStatus(), sellerAccessService.currentEmail(), "SELLER", "Seller created order");
         adjustStockFromOrder(seller.getId(), request.getPrimaryProductName(), request.getTotalQuantity());
         touchCustomerStats(customer, request.getTotalAmount(), saved.getOrderDate());
         return toOrderResponse(saved, customer);
@@ -278,8 +299,13 @@ public class SellerCrudServiceImpl implements SellerCrudService {
         SellerOrder order = requireOrder(sellerCode, orderId);
         ensureUniqueOrderCode(request.getOrderCode(), order.getId(), order.getSellerId());
         CustomerProfile customer = requireCustomerIfPresent(order.getSellerId(), request.getCustomerId());
+        String previousStatus = order.getOrderStatus();
         applyOrder(order, request);
+        ensureValidOrderStatusTransition(previousStatus, order.getOrderStatus());
         SellerOrder saved = sellerOrderRepository.save(order);
+        if (!Objects.equals(previousStatus, saved.getOrderStatus())) {
+            recordOrderStatusChange(saved.getId(), previousStatus, saved.getOrderStatus(), sellerAccessService.currentEmail(), "SELLER", "Seller updated order status");
+        }
         return toOrderResponse(saved, customer);
     }
 
@@ -493,7 +519,11 @@ public class SellerCrudServiceImpl implements SellerCrudService {
     private void applyOrder(SellerOrder order, OrderRequest request) {
         order.setCustomerId(request.getCustomerId());
         order.setOrderCode(request.getOrderCode().trim().toUpperCase(Locale.ROOT));
-        order.setOrderStatus(normalizeValue(request.getOrderStatus()));
+        String normalizedStatus = normalizeValue(request.getOrderStatus());
+        if (!ORDER_STATUSES.contains(normalizedStatus)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_ORDER_STATUS", "Unsupported order status provided.");
+        }
+        order.setOrderStatus(normalizedStatus);
         order.setPaymentMethod(normalizeValue(request.getPaymentMethod()));
         order.setTotalAmount(scaleMoney(request.getTotalAmount()));
         order.setShippingPartner(trimToNull(request.getShippingPartner()));
@@ -503,6 +533,31 @@ public class SellerCrudServiceImpl implements SellerCrudService {
         if (order.getOrderDate() == null) {
             order.setOrderDate(LocalDateTime.now());
         }
+    }
+
+    private void ensureValidOrderStatusTransition(String previousStatus, String newStatus) {
+        if (previousStatus == null || Objects.equals(previousStatus, newStatus)) {
+            return;
+        }
+
+        Set<String> allowedNextStates = ORDER_STATUS_TRANSITIONS.getOrDefault(previousStatus, Set.of());
+        if (!allowedNextStates.contains(newStatus)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_ORDER_STATUS_TRANSITION",
+                    "Order status cannot move from " + previousStatus + " to " + newStatus + '.');
+        }
+    }
+
+    private void recordOrderStatusChange(Long orderId, String previousStatus, String newStatus, String actorEmail, String actorRole,
+            String reason) {
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrderId(orderId);
+        history.setPreviousStatus(previousStatus);
+        history.setNewStatus(newStatus);
+        history.setActorEmail(actorEmail);
+        history.setActorRole(actorRole);
+        history.setReason(reason);
+        history.setChangedAt(LocalDateTime.now());
+        orderStatusHistoryRepository.save(history);
     }
 
     private void applyCoupon(CouponCampaign coupon, CouponRequest request) {

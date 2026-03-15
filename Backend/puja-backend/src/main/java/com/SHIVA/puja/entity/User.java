@@ -43,4 +43,10 @@ public class User {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "admin_two_factor_enabled")
+    private Boolean adminTwoFactorEnabled;
+
+    @Column(name = "admin_allowed_ips", length = 512)
+    private String adminAllowedIps;
 }

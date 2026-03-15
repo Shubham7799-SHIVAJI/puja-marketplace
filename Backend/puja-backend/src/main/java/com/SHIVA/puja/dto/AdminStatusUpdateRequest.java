@@ -11,4 +11,5 @@ public class AdminStatusUpdateRequest {
     private String shippingPartner;
     private String replyText;
     private Boolean abusive;
+    private Double commissionRate;
 }

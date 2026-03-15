@@ -11,4 +11,10 @@ public interface AdminControlService {
     void moderateReview(Long reviewId, AdminStatusUpdateRequest request);
 
     void updateSellerStatus(Long sellerId, AdminStatusUpdateRequest request);
+
+    void updateSellerCommission(Long sellerId, AdminStatusUpdateRequest request);
+
+    void updateUserStatus(Long userId, AdminStatusUpdateRequest request);
+
+    String resetUserPassword(Long userId);
 }

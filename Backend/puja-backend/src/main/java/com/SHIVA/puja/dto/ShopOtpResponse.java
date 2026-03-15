@@ -13,4 +13,5 @@ public class ShopOtpResponse {
     private boolean verified;
     private String message;
     private String previewOtp;
+    private String registrationSessionToken;
 }

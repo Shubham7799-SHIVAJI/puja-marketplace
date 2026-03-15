@@ -31,7 +31,7 @@ import com.SHIVA.puja.service.SellerCrudService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/seller-api")
+@RequestMapping({"/seller-api", "/api/v1/seller-api"})
 @CrossOrigin(origins = "http://localhost:4200")
 @PreAuthorize("hasAnyRole('SELLER','ADMIN')")
 public class SellerOperationsController {

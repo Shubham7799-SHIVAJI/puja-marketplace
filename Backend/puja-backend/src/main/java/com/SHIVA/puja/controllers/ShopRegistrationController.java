@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -22,7 +23,7 @@ import com.SHIVA.puja.dto.ShopRegistrationResponse;
 import com.SHIVA.puja.service.ShopRegistrationService;
 
 @RestController
-@RequestMapping("/shop-registration")
+@RequestMapping({"/shop-registration", "/api/v1/shop-registration"})
 @CrossOrigin(origins = "http://localhost:4200")
 public class ShopRegistrationController {
 
@@ -72,7 +73,8 @@ public class ShopRegistrationController {
     public ShopFileUploadResponse uploadFile(
             @RequestParam(required = false) String registrationId,
             @RequestParam String fieldName,
+            @RequestHeader("X-Registration-Session") String registrationSessionToken,
             @RequestParam("file") MultipartFile file) {
-        return shopRegistrationService.uploadFile(registrationId, fieldName, file);
+        return shopRegistrationService.uploadFile(registrationId, fieldName, file, registrationSessionToken);
     }
 }

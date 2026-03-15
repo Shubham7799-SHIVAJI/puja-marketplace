@@ -29,8 +29,13 @@ export const routes: Routes = [
     loadComponent: () => import('./components/seller-workspace/seller-workspace').then((m) => m.SellerWorkspace),
   },
   {
-    path: 'admin-dashboard',
-    loadComponent: () => import('./components/admin-workspace/admin-workspace').then((m) => m.AdminWorkspace),
+    path: 'admin',
+    loadChildren: () => import('./features/admin/admin.routes').then((m) => m.ADMIN_ROUTES),
+  },
+  { path: 'admin-dashboard', redirectTo: 'admin/dashboard', pathMatch: 'full' },
+  {
+    path: 'admin-otp',
+    loadComponent: () => import('./components/admin-otp-page/admin-otp-page').then((m) => m.AdminOtpPage),
   },
   {
     path: 'product/:productId',

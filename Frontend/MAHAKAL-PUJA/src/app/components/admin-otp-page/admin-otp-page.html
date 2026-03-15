@@ -1,0 +1,21 @@
+<section class="admin-otp-shell">
+  <article class="admin-otp-card">
+    <p class="kicker">Admin 2FA</p>
+    <h1>Verify Admin Sign-In</h1>
+    <p class="description">Enter the 6-digit OTP sent to {{ contact }} to access the admin control plane.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="otp">One-time password</label>
+      <input id="otp" type="text" maxlength="6" inputmode="numeric" formControlName="otp" placeholder="Enter 6-digit OTP" />
+      <small class="error" *ngIf="form.controls['otp'].touched && form.controls['otp'].invalid">Enter a valid 6-digit OTP.</small>
+
+      <p class="error" *ngIf="backendError">{{ backendError }}</p>
+
+      <button type="submit" [disabled]="loading">
+        {{ loading ? 'Verifying...' : 'Verify and Continue' }}
+      </button>
+    </form>
+
+    <a routerLink="/signin">Back to sign-in</a>
+  </article>
+</section>

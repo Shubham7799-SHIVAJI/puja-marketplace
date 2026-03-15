@@ -25,9 +25,10 @@ public class DatabaseMigrationConfig {
             populator.addScript(new ClassPathResource("sql/seller-dashboard-schema.sql"));
             populator.addScript(new ClassPathResource("sql/security-and-audit-schema.sql"));
             populator.addScript(new ClassPathResource("sql/customer-marketplace-schema.sql"));
+            populator.addScript(new ClassPathResource("sql/order-lifecycle-schema.sql"));
             populator.execute(dataSource);
 
-            LOGGER.info("Applied startup database migrations for shop registration, OTP, seller dashboard, security schema, and customer marketplace schema.");
+            LOGGER.info("Applied startup database migrations for shop registration, OTP, seller dashboard, security schema, customer marketplace schema, and order lifecycle schema.");
         };
     }
 }

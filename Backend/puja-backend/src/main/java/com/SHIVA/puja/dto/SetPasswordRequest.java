@@ -20,4 +20,7 @@ public class SetPasswordRequest {
 
     @NotBlank(message = "Re-enter password is required")
     private String confirmPassword;
+
+    @NotBlank(message = "Password reset token is required")
+    private String resetToken;
 }

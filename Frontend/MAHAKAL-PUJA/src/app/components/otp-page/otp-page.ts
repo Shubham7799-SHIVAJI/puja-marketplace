@@ -147,14 +147,18 @@ export class OtpPage implements OnInit, AfterViewInit, OnDestroy {
     const otp = this.otpControls.map((control) => control.value).join('');
 
     try {
-      await firstValueFrom(
+      const response = await firstValueFrom(
         this.authService.verifyOtp({
           contact: this.contactValue,
           otp,
         }),
       );
 
-      this.otpSecurityContextService.setVerifiedContext(this.flowToken, this.contactValue);
+      if (!response.resetToken) {
+        throw new Error('Reset token missing from verification response.');
+      }
+
+      this.otpSecurityContextService.setVerifiedContext(this.flowToken, this.contactValue, response.resetToken);
       const encryptedEmail = await this.secureQueryStateService.encryptForUrl(this.contactValue);
       await this.router.navigate(['/set-password'], {
         queryParams: {

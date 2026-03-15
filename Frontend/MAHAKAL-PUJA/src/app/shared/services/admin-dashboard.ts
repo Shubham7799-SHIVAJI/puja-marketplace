@@ -8,7 +8,7 @@ import { AdminWorkspaceData } from '../models/admin-dashboard';
   providedIn: 'root',
 })
 export class AdminDashboardService {
-  private readonly api = 'http://localhost:8080/admin-dashboard/workspace';
+  private readonly api = 'http://localhost:8080/api/admin/dashboard/workspace';
 
   constructor(private readonly http: HttpClient) {}
 

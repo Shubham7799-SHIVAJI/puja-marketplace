@@ -1,5 +1,6 @@
 package com.SHIVA.puja.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -57,6 +58,9 @@ public class Seller {
 
     @Column(name = "bank_account_masked", length = 64)
     private String bankAccountMasked;
+
+    @Column(name = "commission_rate", nullable = false, precision = 5, scale = 2)
+    private BigDecimal commissionRate;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

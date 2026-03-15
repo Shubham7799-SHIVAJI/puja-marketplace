@@ -1,0 +1,12 @@
+package com.SHIVA.puja.repository;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.SHIVA.puja.entity.AdminActivityLog;
+
+public interface AdminActivityLogRepository extends JpaRepository<AdminActivityLog, Long> {
+
+    List<AdminActivityLog> findTop100ByOrderByCreatedAtDesc();
+}

@@ -37,20 +37,18 @@ import com.SHIVA.puja.dto.CustomerReviewCreateRequest;
 import com.SHIVA.puja.dto.MarketplaceHighlightsResponse;
 import com.SHIVA.puja.dto.MarketplaceProductCardResponse;
 import com.SHIVA.puja.dto.MarketplaceProductDetailResponse;
-import com.SHIVA.puja.dto.OrderResponse;
 import com.SHIVA.puja.dto.PageResponse;
 import com.SHIVA.puja.dto.ProductResponse;
 import com.SHIVA.puja.dto.ReviewResponse;
 import com.SHIVA.puja.dto.WishlistItemResponse;
-import com.SHIVA.puja.entity.Category;
 import com.SHIVA.puja.entity.CouponCampaign;
 import com.SHIVA.puja.entity.CustomerAddress;
 import com.SHIVA.puja.entity.CustomerNotification;
 import com.SHIVA.puja.entity.CustomerOrderLink;
 import com.SHIVA.puja.entity.CustomerProfile;
-import com.SHIVA.puja.entity.InventoryItem;
 import com.SHIVA.puja.entity.OrderItem;
 import com.SHIVA.puja.entity.OrderPayment;
+import com.SHIVA.puja.entity.OrderStatusHistory;
 import com.SHIVA.puja.entity.OrderShippingDetail;
 import com.SHIVA.puja.entity.PaymentRecord;
 import com.SHIVA.puja.entity.Product;
@@ -72,6 +70,7 @@ import com.SHIVA.puja.repository.CustomerProfileRepository;
 import com.SHIVA.puja.repository.InventoryItemRepository;
 import com.SHIVA.puja.repository.OrderItemRepository;
 import com.SHIVA.puja.repository.OrderPaymentRepository;
+import com.SHIVA.puja.repository.OrderStatusHistoryRepository;
 import com.SHIVA.puja.repository.OrderShippingDetailRepository;
 import com.SHIVA.puja.repository.PaymentRecordRepository;
 import com.SHIVA.puja.repository.ProductImageRepository;
@@ -107,6 +106,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
     private final OrderItemRepository orderItemRepository;
     private final OrderShippingDetailRepository orderShippingDetailRepository;
     private final OrderPaymentRepository orderPaymentRepository;
+    private final OrderStatusHistoryRepository orderStatusHistoryRepository;
     private final CustomerOrderLinkRepository customerOrderLinkRepository;
     private final PaymentRecordRepository paymentRecordRepository;
     private final ShippingSettingRepository shippingSettingRepository;
@@ -128,6 +128,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
             OrderItemRepository orderItemRepository,
             OrderShippingDetailRepository orderShippingDetailRepository,
             OrderPaymentRepository orderPaymentRepository,
+            OrderStatusHistoryRepository orderStatusHistoryRepository,
             CustomerOrderLinkRepository customerOrderLinkRepository,
             PaymentRecordRepository paymentRecordRepository,
             ShippingSettingRepository shippingSettingRepository,
@@ -148,6 +149,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
         this.orderItemRepository = orderItemRepository;
         this.orderShippingDetailRepository = orderShippingDetailRepository;
         this.orderPaymentRepository = orderPaymentRepository;
+        this.orderStatusHistoryRepository = orderStatusHistoryRepository;
         this.customerOrderLinkRepository = customerOrderLinkRepository;
         this.paymentRecordRepository = paymentRecordRepository;
         this.shippingSettingRepository = shippingSettingRepository;
@@ -400,8 +402,6 @@ public class MarketplaceServiceImpl implements MarketplaceService {
         CustomerAddress address = requireAddress(user.getId(), request.getAddressId());
         LocalDateTime now = LocalDateTime.now();
 
-        Map<Long, Product> productsById = productRepository.findAllById(request.getItems().stream().map(CheckoutRequest.Item::getProductId).toList()).stream()
-                .collect(Collectors.toMap(Product::getId, Function.identity()));
         Map<Long, ProductVariant> variantsById = productVariantRepository.findAllById(request.getItems().stream()
                 .map(CheckoutRequest.Item::getVariantId)
                 .filter(Objects::nonNull)
@@ -424,7 +424,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
 
         List<CheckoutResponse.PlacedOrder> placedOrders = new ArrayList<>();
         BigDecimal grandTotal = BigDecimal.ZERO;
-        String paymentStatus = isOnlinePayment(request.getPaymentMethod()) ? "PAID" : "PENDING_COD";
+        String paymentStatus = isOnlinePayment(request.getPaymentMethod()) ? "PENDING_GATEWAY" : "PENDING_COD";
 
         for (Map.Entry<Long, List<CheckoutLine>> entry : groupedLines.entrySet()) {
             Long sellerId = entry.getKey();
@@ -455,6 +455,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
             order.setTotalQuantity(lines.stream().mapToInt(CheckoutLine::quantity).sum());
             order.setOrderDate(now);
             SellerOrder savedOrder = sellerOrderRepository.save(order);
+            recordOrderStatusChange(savedOrder.getId(), null, savedOrder.getOrderStatus(), user.getEmail(), user.getRole(), "Order placed by customer");
 
             List<OrderItem> items = lines.stream().map(line -> {
                 OrderItem orderItem = new OrderItem();
@@ -494,11 +495,13 @@ public class MarketplaceServiceImpl implements MarketplaceService {
             payment.setPaymentMethod(normalizeText(request.getPaymentMethod()));
             payment.setPaymentStatus(paymentStatus);
             payment.setGatewayProvider(resolveGatewayProvider(request.getPaymentMethod()));
-            payment.setGatewayReference(isOnlinePayment(request.getPaymentMethod()) ? generateGatewayReference(savedOrder.getOrderCode()) : null);
+                payment.setGatewayReference(null);
             payment.setRefundStatus("NOT_REQUESTED");
             payment.setRefundAmount(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP));
-            payment.setTransactionLog(paymentStatus.equals("PAID") ? "Payment authorized successfully" : "COD payment to be collected on delivery");
-            payment.setPaidAt(isOnlinePayment(request.getPaymentMethod()) ? now : null);
+                payment.setTransactionLog(isOnlinePayment(request.getPaymentMethod())
+                    ? "Awaiting payment initiation and gateway confirmation"
+                    : "COD payment to be collected on delivery");
+                payment.setPaidAt(null);
             payment.setCreatedAt(now);
             payment.setUpdatedAt(now);
             orderPaymentRepository.save(payment);
@@ -521,12 +524,26 @@ public class MarketplaceServiceImpl implements MarketplaceService {
             customerOrderLinkRepository.save(link);
 
             for (CheckoutLine line : lines) {
-                Product product = line.product();
-                product.setStockQuantity(defaultInteger(product.getStockQuantity()) - line.quantity());
-                product.setUpdatedAt(now);
-                productRepository.save(product);
-                inventoryItemRepository.findBySellerIdAndProductId(sellerId, product.getId()).ifPresent(inventory -> {
-                    inventory.setAvailableStock(Math.max(0, defaultInteger(inventory.getAvailableStock()) - line.quantity()));
+                Product lockedProduct = productRepository.findByIdForUpdate(line.product().getId())
+                        .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "PRODUCT_NOT_FOUND", "Product not found during checkout."));
+                int availableStock = defaultInteger(lockedProduct.getStockQuantity());
+                if (availableStock < line.quantity()) {
+                    throw new ApiException(HttpStatus.BAD_REQUEST, "INSUFFICIENT_STOCK",
+                            "Requested quantity is not available for " + lockedProduct.getName() + '.');
+                }
+
+                lockedProduct.setStockQuantity(availableStock - line.quantity());
+                lockedProduct.setUpdatedAt(now);
+                productRepository.save(lockedProduct);
+
+                inventoryItemRepository.findBySellerIdAndProductIdForUpdate(sellerId, lockedProduct.getId()).ifPresent(inventory -> {
+                    int inventoryAvailable = defaultInteger(inventory.getAvailableStock());
+                    if (inventoryAvailable < line.quantity()) {
+                        throw new ApiException(HttpStatus.BAD_REQUEST, "INSUFFICIENT_STOCK",
+                                "Inventory is not sufficient for " + lockedProduct.getName() + '.');
+                    }
+                    inventory.setAvailableStock(inventoryAvailable - line.quantity());
+                    inventory.setReservedStock(defaultInteger(inventory.getReservedStock()) + line.quantity());
                     inventory.setUpdatedAt(now);
                     inventoryItemRepository.save(inventory);
                 });
@@ -539,7 +556,7 @@ public class MarketplaceServiceImpl implements MarketplaceService {
 
             createNotification(user.getId(), "ORDER", "Order placed", savedOrder.getOrderCode() + " has been placed with " + seller.getShopName() + '.');
             if (isOnlinePayment(request.getPaymentMethod())) {
-                createNotification(user.getId(), "PAYMENT", "Payment confirmed", "Payment received for order " + savedOrder.getOrderCode() + '.');
+                createNotification(user.getId(), "PAYMENT", "Payment pending", "Complete payment for order " + savedOrder.getOrderCode() + " to start processing.");
             }
 
             placedOrders.add(CheckoutResponse.PlacedOrder.builder()
@@ -945,6 +962,19 @@ public class MarketplaceServiceImpl implements MarketplaceService {
         customerNotificationRepository.save(notification);
     }
 
+    private void recordOrderStatusChange(Long orderId, String previousStatus, String newStatus, String actorEmail, String actorRole,
+            String reason) {
+        OrderStatusHistory history = new OrderStatusHistory();
+        history.setOrderId(orderId);
+        history.setPreviousStatus(previousStatus);
+        history.setNewStatus(newStatus);
+        history.setActorEmail(actorEmail);
+        history.setActorRole(actorRole);
+        history.setReason(reason);
+        history.setChangedAt(LocalDateTime.now());
+        orderStatusHistoryRepository.save(history);
+    }
+
     private BigDecimal finalPrice(Product product) {
         BigDecimal discount = defaultDecimal(product.getDiscountPercent());
         BigDecimal multiplier = BigDecimal.ONE.subtract(discount.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP));
@@ -981,10 +1011,6 @@ public class MarketplaceServiceImpl implements MarketplaceService {
 
     private String generateTrackingNumber(String sellerCode) {
         return "TRK-" + sellerCode + '-' + System.nanoTime();
-    }
-
-    private String generateGatewayReference(String orderCode) {
-        return "PAY-" + orderCode;
     }
 
     private String defaultString(String value, String fallback) {

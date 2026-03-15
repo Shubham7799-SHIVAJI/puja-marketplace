@@ -14,7 +14,7 @@ import com.SHIVA.puja.service.SellerAdminService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/seller-admin")
+@RequestMapping({"/seller-admin", "/api/v1/seller-admin"})
 @CrossOrigin(origins = "http://localhost:4200")
 public class SellerAdminController {
 

@@ -12,6 +12,7 @@ import { AuthService } from '../../shared/services/auth';
 import { firstValueFrom } from 'rxjs';
 import { SecureQueryStateService } from '../../shared/services/secure-query-state';
 import { AuthSessionService } from '../../shared/services/auth-session';
+import { AdminAuthFlowService } from '../../shared/services/admin-auth-flow';
 
 @Component({
   standalone: true,
@@ -35,6 +36,7 @@ export class SignInPage implements OnInit {
     private authService: AuthService,
     private secureQueryStateService: SecureQueryStateService,
     private authSessionService: AuthSessionService,
+    private adminAuthFlowService: AdminAuthFlowService,
   ) {}
 
   ngOnInit() {
@@ -80,14 +82,38 @@ export class SignInPage implements OnInit {
         });
       }
 
-      if (response.role === 'ADMIN') {
-        await this.router.navigate(['/admin-dashboard']);
+      if (response.role === 'ADMIN' || response.role === 'SUPER_ADMIN') {
+        await this.router.navigate(['/admin/dashboard']);
       } else if (response.role === 'SELLER') {
         await this.router.navigate(['/seller-dashboard']);
       } else {
         await this.router.navigate(['/home']);
       }
     } catch (error) {
+      const code = this.authService.getErrorCode(error);
+      if (code === 'ADMIN_2FA_REQUIRED') {
+        try {
+          const challengeResponse = await firstValueFrom(
+            this.authService.startAdminLoginChallenge(contact, password),
+          );
+
+          this.adminAuthFlowService.save({
+            contact,
+            challengeToken: challengeResponse.challengeToken,
+            createdAt: Date.now(),
+          });
+
+          await this.router.navigate(['/admin-otp']);
+          return;
+        } catch (challengeError) {
+          this.backendError = this.authService.getFriendlyErrorMessage(
+            challengeError,
+            'Admin challenge could not be started. Please try again.',
+          );
+          return;
+        }
+      }
+
       this.fieldBackendErrors = this.authService.getFieldErrors(error);
       this.backendError = this.authService.getFriendlyErrorMessage(error, this.text.requestFailedMessage);
     } finally {

@@ -33,7 +33,7 @@ import com.SHIVA.puja.service.MarketplaceService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/marketplace")
+@RequestMapping({"/marketplace", "/api/v1/marketplace"})
 @CrossOrigin(origins = "http://localhost:4200")
 public class MarketplaceController {
 

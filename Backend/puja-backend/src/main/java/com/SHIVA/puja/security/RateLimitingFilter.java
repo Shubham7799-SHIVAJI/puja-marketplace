@@ -1,9 +1,7 @@
 package com.SHIVA.puja.security;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -12,6 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.SHIVA.puja.config.AppProperties;
 import com.SHIVA.puja.exception.ApiErrorResponse;
+import com.SHIVA.puja.service.RedisRateLimiterService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,11 +21,12 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RateLimitingFilter extends OncePerRequestFilter {
 
     private final AppProperties appProperties;
+    private final RedisRateLimiterService redisRateLimiterService;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private final Map<String, WindowCounter> counters = new ConcurrentHashMap<>();
 
-    public RateLimitingFilter(AppProperties appProperties) {
+    public RateLimitingFilter(AppProperties appProperties, RedisRateLimiterService redisRateLimiterService) {
         this.appProperties = appProperties;
+        this.redisRateLimiterService = redisRateLimiterService;
     }
 
     @Override
@@ -35,16 +35,9 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         String key = request.getRemoteAddr() + ":" + request.getRequestURI();
         int maxRequests = appProperties.getRateLimit().getRequests();
         long windowSeconds = appProperties.getRateLimit().getWindowSeconds();
-        WindowCounter counter = counters.compute(key, (ignored, existing) -> {
-            Instant now = Instant.now();
-            if (existing == null || now.isAfter(existing.windowStart.plusSeconds(windowSeconds))) {
-                return new WindowCounter(now, 1);
-            }
-            existing.count++;
-            return existing;
-        });
+        boolean allowed = redisRateLimiterService.allowRequest(key, maxRequests, (int) windowSeconds);
 
-        if (counter.count > maxRequests) {
+        if (!allowed) {
             response.setStatus(HttpStatus.TOO_MANY_REQUESTS.value());
             response.setContentType("application/json");
             objectMapper.writeValue(response.getWriter(), ApiErrorResponse.builder()
@@ -59,15 +52,5 @@ public class RateLimitingFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-    }
-
-    private static class WindowCounter {
-        private final Instant windowStart;
-        private int count;
-
-        private WindowCounter(Instant windowStart, int count) {
-            this.windowStart = windowStart;
-            this.count = count;
-        }
     }
 }

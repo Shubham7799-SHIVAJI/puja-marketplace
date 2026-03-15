@@ -1,0 +1,89 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.admin-otp-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at top right, rgba(182, 73, 38, 0.18), transparent 30%),
+    linear-gradient(180deg, #f6efe6 0%, #eef3fb 100%);
+  padding: 1rem;
+  font-family: Manrope, 'Segoe UI', sans-serif;
+}
+
+.admin-otp-card {
+  width: min(460px, 100%);
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(24, 32, 51, 0.12);
+  border-radius: 1.2rem;
+  box-shadow: 0 18px 48px rgba(24, 32, 51, 0.14);
+  padding: 1.4rem;
+}
+
+.kicker {
+  margin: 0 0 0.45rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6b7485;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0 0 0.55rem;
+  font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+  color: #172139;
+}
+
+.description {
+  margin: 0 0 1rem;
+  color: #51607e;
+}
+
+form {
+  display: grid;
+  gap: 0.55rem;
+}
+
+label {
+  font-weight: 700;
+  color: #1e2742;
+}
+
+input {
+  border: 1px solid rgba(24, 32, 51, 0.2);
+  border-radius: 0.75rem;
+  padding: 0.72rem 0.8rem;
+  font-size: 1rem;
+}
+
+button {
+  margin-top: 0.35rem;
+  border: 0;
+  border-radius: 0.75rem;
+  background: #18233b;
+  color: #fff;
+  font-weight: 700;
+  padding: 0.72rem 0.9rem;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.error {
+  color: #b42318;
+  margin: 0;
+}
+
+a {
+  margin-top: 0.9rem;
+  display: inline-block;
+  color: #1f4e8c;
+  font-weight: 700;
+  text-decoration: none;
+}

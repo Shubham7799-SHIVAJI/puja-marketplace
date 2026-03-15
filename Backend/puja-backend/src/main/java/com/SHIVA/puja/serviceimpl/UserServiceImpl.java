@@ -38,6 +38,7 @@ import com.SHIVA.puja.repository.OtpRequestRepository;
 import com.SHIVA.puja.repository.RefreshTokenRepository;
 import com.SHIVA.puja.repository.UserRepository;
 import com.SHIVA.puja.security.JwtService;
+import com.SHIVA.puja.service.RedisTokenBlacklistService;
 import com.SHIVA.puja.service.UserService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,6 +54,7 @@ public class UserServiceImpl implements UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final JavaMailSender mailSender;
     private final JwtService jwtService;
+    private final RedisTokenBlacklistService redisTokenBlacklistService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final SecureRandom secureRandom = new SecureRandom();
 
@@ -68,24 +70,29 @@ public class UserServiceImpl implements UserService {
     @Value("${app.mail.subject:Puja Marketplace Login OTP}")
     private String otpMailSubject;
 
-    @Value("${app.security.jwt-expiration-minutes:720}")
+    @Value("${app.security.jwt-expiration-minutes:15}")
     private long jwtExpirationMinutes;
 
     @Value("${app.security.refresh-expiration-days:30}")
     private long refreshExpirationDays;
+
+    @Value("${app.security.password-reset-token-expiration-minutes:10}")
+    private long passwordResetTokenExpirationMinutes;
 
     public UserServiceImpl(
             UserRepository userRepository,
             OtpRequestRepository otpRequestRepository,
             RefreshTokenRepository refreshTokenRepository,
             JavaMailSender mailSender,
-            JwtService jwtService
+                JwtService jwtService,
+                RedisTokenBlacklistService redisTokenBlacklistService
     ) {
         this.userRepository = userRepository;
         this.otpRequestRepository = otpRequestRepository;
         this.refreshTokenRepository = refreshTokenRepository;
         this.mailSender = mailSender;
         this.jwtService = jwtService;
+        this.redisTokenBlacklistService = redisTokenBlacklistService;
     }
 
     @Override
@@ -143,7 +150,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void verifyEmailOtp(VerifyOtpRequest request) {
+    public String verifyEmailOtp(VerifyOtpRequest request) {
         String email = normalize(request.getContact());
         String otp = normalize(request.getOtp());
 
@@ -155,7 +162,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", "User not found for this email."));
 
         if (Boolean.TRUE.equals(user.getEmailVerified())) {
-            return;
+            return issuePasswordResetToken(user.getEmail());
         }
 
         OtpRequest otpRequest = otpRequestRepository
@@ -180,6 +187,8 @@ public class UserServiceImpl implements UserService {
         user.setLastLoginAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
+
+        return issuePasswordResetToken(user.getEmail());
     }
 
     @Override
@@ -188,9 +197,14 @@ public class UserServiceImpl implements UserService {
         String email = normalize(request.getContact());
         String password = normalize(request.getPassword());
         String confirmPassword = normalize(request.getConfirmPassword());
+        String resetToken = normalize(request.getResetToken());
 
-        if (email == null || password == null || confirmPassword == null) {
+        if (email == null || password == null || confirmPassword == null || resetToken == null) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "Email and password details are required.");
+        }
+
+        if (!jwtService.isScopedTokenValid(resetToken, "PASSWORD_RESET", email)) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_RESET_TOKEN", "Password reset session is invalid or expired. Please verify OTP again.");
         }
 
         if (!password.equals(confirmPassword)) {
@@ -208,6 +222,14 @@ public class UserServiceImpl implements UserService {
         user.setStatus("ACTIVE");
         user.setUpdatedAt(LocalDateTime.now());
         userRepository.save(user);
+    }
+
+    private String issuePasswordResetToken(String email) {
+        return jwtService.generateScopedToken(
+                email,
+                "PASSWORD_RESET",
+                passwordResetTokenExpirationMinutes,
+                java.util.Map.of("purpose", "SET_PASSWORD"));
     }
 
     @Override
@@ -229,6 +251,12 @@ public class UserServiceImpl implements UserService {
 
         if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_CREDENTIALS", "Invalid email or password.");
+        }
+
+        String role = user.getRole() == null ? "" : user.getRole().trim().toUpperCase();
+        if ("ADMIN".equals(role) || "SUPER_ADMIN".equals(role)) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "ADMIN_2FA_REQUIRED",
+                    "Use admin challenge endpoint to complete two-factor authentication.");
         }
 
         user.setLastLoginAt(LocalDateTime.now());
@@ -274,6 +302,20 @@ public class UserServiceImpl implements UserService {
                     token.setRevokedAt(LocalDateTime.now());
                     refreshTokenRepository.save(token);
                 });
+    }
+
+    @Override
+    public void blacklistAccessToken(String token) {
+        String normalizedToken = normalize(token);
+        if (normalizedToken == null) {
+            return;
+        }
+
+        String tokenId = jwtService.extractTokenId(normalizedToken);
+        long ttlSeconds = jwtService.remainingTtlSeconds(normalizedToken);
+        if (tokenId != null && ttlSeconds > 0) {
+            redisTokenBlacklistService.blacklistTokenId(tokenId, ttlSeconds);
+        }
     }
 
     private AuthTokenResponse issueAuthTokens(User user, String message) {

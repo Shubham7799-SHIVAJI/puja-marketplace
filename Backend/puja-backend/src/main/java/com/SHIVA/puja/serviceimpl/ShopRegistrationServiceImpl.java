@@ -43,6 +43,7 @@ import com.SHIVA.puja.exception.ApiException;
 import com.SHIVA.puja.exception.RequestValidationException;
 import com.SHIVA.puja.repository.OtpRequestRepository;
 import com.SHIVA.puja.repository.ShopRegistrationRepository;
+import com.SHIVA.puja.security.JwtService;
 import com.SHIVA.puja.service.ShopRegistrationService;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
@@ -80,8 +81,7 @@ public class ShopRegistrationServiceImpl implements ShopRegistrationService {
             "image/png",
             "image/webp");
         private static final Set<String> DOCUMENT_CONTENT_TYPES = Set.of(
-            "application/pdf",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+            "application/pdf");
         private static final Set<String> PHOTO_UPLOAD_FIELDS = Set.of(
             "profilePhoto",
             "ownerAadharPhoto",
@@ -93,6 +93,7 @@ public class ShopRegistrationServiceImpl implements ShopRegistrationService {
     private final ShopRegistrationRepository shopRegistrationRepository;
     private final OtpRequestRepository otpRequestRepository;
     private final JavaMailSender mailSender;
+    private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final SecureRandom secureRandom = new SecureRandom();
     private final Path uploadDirectory = Paths.get("uploads", "shop-registration");
@@ -115,13 +116,18 @@ public class ShopRegistrationServiceImpl implements ShopRegistrationService {
     @Value("${app.twilio.from-number:}")
     private String twilioFromNumber;
 
+    @Value("${app.security.shop-registration-session-token-expiration-minutes:30}")
+    private long shopRegistrationSessionTokenExpirationMinutes;
+
     public ShopRegistrationServiceImpl(
             ShopRegistrationRepository shopRegistrationRepository,
             OtpRequestRepository otpRequestRepository,
-            JavaMailSender mailSender) {
+            JavaMailSender mailSender,
+            JwtService jwtService) {
         this.shopRegistrationRepository = shopRegistrationRepository;
         this.otpRequestRepository = otpRequestRepository;
         this.mailSender = mailSender;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -221,6 +227,7 @@ public class ShopRegistrationServiceImpl implements ShopRegistrationService {
             ? "Email OTP sent successfully. Check your inbox and spam folder."
                 : "Phone OTP sent successfully. Check your SMS inbox.")
             .previewOtp(null)
+                .registrationSessionToken(null)
                 .build();
     }
 
@@ -268,6 +275,7 @@ public class ShopRegistrationServiceImpl implements ShopRegistrationService {
 
         registration.setUpdatedAt(LocalDateTime.now());
         ShopRegistration savedRegistration = shopRegistrationRepository.save(registration);
+        String registrationSessionToken = issueRegistrationSessionToken(savedRegistration.getRegistrationId());
 
         return ShopOtpResponse.builder()
                 .registrationId(savedRegistration.getRegistrationId())
@@ -276,6 +284,7 @@ public class ShopRegistrationServiceImpl implements ShopRegistrationService {
                 .verified(true)
                 .message("EMAIL".equals(channel) ? "Email OTP verified." : "Phone OTP verified.")
                 .previewOtp(null)
+            .registrationSessionToken(registrationSessionToken)
                 .build();
     }
 
@@ -296,6 +305,7 @@ public class ShopRegistrationServiceImpl implements ShopRegistrationService {
         registration.setUpdatedAt(LocalDateTime.now());
 
         ShopRegistration savedRegistration = shopRegistrationRepository.save(registration);
+        String registrationSessionToken = issueRegistrationSessionToken(savedRegistration.getRegistrationId());
 
         return ShopOtpResponse.builder()
                 .registrationId(savedRegistration.getRegistrationId())
@@ -304,14 +314,25 @@ public class ShopRegistrationServiceImpl implements ShopRegistrationService {
                 .verified(true)
                 .message("Phone number verified with Firebase Authentication.")
                 .previewOtp(null)
+                .registrationSessionToken(registrationSessionToken)
                 .build();
     }
 
     @Override
-    public ShopFileUploadResponse uploadFile(String registrationId, String fieldName, MultipartFile file) {
+    public ShopFileUploadResponse uploadFile(String registrationId, String fieldName, MultipartFile file, String registrationSessionToken) {
         if (!ALLOWED_UPLOAD_FIELDS.contains(fieldName)) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_UPLOAD_FIELD",
                     "The selected upload field is not supported.");
+        }
+
+        if (!hasText(registrationId)) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", "Registration id is required for file upload.");
+        }
+
+        if (!hasText(registrationSessionToken)
+                || !jwtService.isScopedTokenValid(registrationSessionToken.trim(), "SHOP_REG_UPLOAD", registrationId.trim())) {
+            throw new ApiException(HttpStatus.UNAUTHORIZED, "INVALID_REGISTRATION_SESSION",
+                    "Upload session is invalid or expired. Verify OTP again to continue.");
         }
 
         validateUpload(fieldName, file);
@@ -547,8 +568,16 @@ public class ShopRegistrationServiceImpl implements ShopRegistrationService {
             throw new ApiException(HttpStatus.BAD_REQUEST, "INVALID_FILE_TYPE",
                 isPhotoField
                     ? "Only JPG, PNG, and WEBP images are allowed for this upload."
-                    : "Only PDF and DOCX files are allowed for this upload.");
+                    : "Only PDF files are allowed for this upload.");
         }
+    }
+
+    private String issueRegistrationSessionToken(String registrationId) {
+        return jwtService.generateScopedToken(
+                registrationId,
+                "SHOP_REG_UPLOAD",
+                shopRegistrationSessionTokenExpirationMinutes,
+                Map.of("purpose", "SHOP_REGISTRATION_UPLOAD"));
     }
 
     private void ensureUploadDirectoryExists() {

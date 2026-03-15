@@ -1,6 +1,7 @@
-import { HttpClient, HttpErrorResponse, HttpEvent } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ApiErrorService } from './api-error';
 
 export interface ShopRegistrationPayload {
   registrationId: string | null;
@@ -129,12 +130,7 @@ export interface ShopOtpResponse {
   verified: boolean;
   message: string;
   previewOtp: string | null;
-}
-
-export interface ApiErrorResponse {
-  code?: string;
-  message?: string;
-  fieldErrors?: Record<string, string>;
+  registrationSessionToken: string | null;
 }
 
 @Injectable({
@@ -142,8 +138,12 @@ export interface ApiErrorResponse {
 })
 export class ShopRegistrationService {
   private readonly api = 'http://localhost:8080/shop-registration';
+  private readonly sessionTokenStorageKey = 'shop-registration-session-tokens';
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(
+    private readonly http: HttpClient,
+    private readonly apiErrorService: ApiErrorService,
+  ) {}
 
   saveDraft(payload: ShopRegistrationPayload): Observable<ShopRegistrationResponse> {
     return this.http.post<ShopRegistrationResponse>(`${this.api}/draft`, payload);
@@ -162,7 +162,18 @@ export class ShopRegistrationService {
   }
 
   verifyOtp(payload: ShopOtpVerifyRequest): Observable<ShopOtpResponse> {
-    return this.http.post<ShopOtpResponse>(`${this.api}/otp/verify`, payload);
+    return new Observable<ShopOtpResponse>((observer) => {
+      this.http.post<ShopOtpResponse>(`${this.api}/otp/verify`, payload).subscribe({
+        next: (response) => {
+          if (response.registrationId && response.registrationSessionToken) {
+            this.setRegistrationSessionToken(response.registrationId, response.registrationSessionToken);
+          }
+          observer.next(response);
+          observer.complete();
+        },
+        error: (error) => observer.error(error),
+      });
+    });
   }
 
   uploadFile(file: File, fieldName: string, registrationId?: string): Observable<HttpEvent<ShopFileUploadResponse>> {
@@ -174,35 +185,51 @@ export class ShopRegistrationService {
       formData.append('registrationId', registrationId);
     }
 
+    const sessionToken = registrationId ? this.getRegistrationSessionToken(registrationId) : null;
+    const headers = sessionToken
+      ? new HttpHeaders({
+          'X-Registration-Session': sessionToken,
+        })
+      : undefined;
+
     return this.http.post<ShopFileUploadResponse>(`${this.api}/upload`, formData, {
       reportProgress: true,
       observe: 'events',
+      headers,
     });
   }
 
+  private setRegistrationSessionToken(registrationId: string, token: string): void {
+    const tokens = this.getRegistrationSessionTokenMap();
+    tokens[registrationId] = token;
+    sessionStorage.setItem(this.sessionTokenStorageKey, JSON.stringify(tokens));
+  }
+
+  private getRegistrationSessionToken(registrationId: string): string | null {
+    return this.getRegistrationSessionTokenMap()[registrationId] ?? null;
+  }
+
+  private getRegistrationSessionTokenMap(): Record<string, string> {
+    const raw = sessionStorage.getItem(this.sessionTokenStorageKey);
+    if (!raw) {
+      return {};
+    }
+
+    try {
+      const parsed = JSON.parse(raw) as Record<string, string>;
+      return parsed ?? {};
+    } catch {
+      return {};
+    }
+  }
+
   getFriendlyErrorMessage(error: unknown, fallbackMessage: string): string {
-    const parsed = this.parseError(error);
+    const parsed = this.apiErrorService.parse(error);
     return parsed?.message ?? fallbackMessage;
   }
 
   getFieldErrors(error: unknown): Record<string, string> {
-    const parsed = this.parseError(error);
+    const parsed = this.apiErrorService.parse(error);
     return parsed?.fieldErrors ?? {};
-  }
-
-  private parseError(error: unknown): ApiErrorResponse | null {
-    if (error instanceof HttpErrorResponse) {
-      if (error.error && typeof error.error === 'object') {
-        return error.error as ApiErrorResponse;
-      }
-
-      return { message: error.message };
-    }
-
-    if (typeof error === 'object' && error !== null) {
-      return error as ApiErrorResponse;
-    }
-
-    return null;
   }
 }

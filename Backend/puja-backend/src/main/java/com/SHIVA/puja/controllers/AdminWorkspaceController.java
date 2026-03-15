@@ -10,9 +10,9 @@ import com.SHIVA.puja.dto.AdminWorkspaceResponse;
 import com.SHIVA.puja.service.AdminWorkspaceService;
 
 @RestController
-@RequestMapping("/admin-dashboard")
+@RequestMapping({"/admin-dashboard", "/api/v1/admin-dashboard", "/api/admin/dashboard"})
 @CrossOrigin(origins = "http://localhost:4200")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAnyRole('ADMIN','SUPER_ADMIN')")
 public class AdminWorkspaceController {
 
     private final AdminWorkspaceService adminWorkspaceService;

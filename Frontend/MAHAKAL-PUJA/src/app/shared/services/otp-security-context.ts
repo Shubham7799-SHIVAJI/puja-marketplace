@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 export interface OtpSecurityContext {
   flow: string;
   email: string;
+  resetToken: string;
   verifiedAt: number;
 }
 
@@ -13,10 +14,11 @@ export class OtpSecurityContextService {
   private readonly storageKey = 'otp_security_context';
   private readonly maxAgeMs = 10 * 60 * 1000;
 
-  setVerifiedContext(flow: string, email: string) {
+  setVerifiedContext(flow: string, email: string, resetToken: string) {
     const payload: OtpSecurityContext = {
       flow,
       email,
+      resetToken,
       verifiedAt: Date.now(),
     };
 
@@ -31,7 +33,7 @@ export class OtpSecurityContextService {
 
     try {
       const parsed = JSON.parse(raw) as OtpSecurityContext;
-      if (!parsed.flow || !parsed.email || !parsed.verifiedAt) {
+      if (!parsed.flow || !parsed.email || !parsed.resetToken || !parsed.verifiedAt) {
         return null;
       }
 

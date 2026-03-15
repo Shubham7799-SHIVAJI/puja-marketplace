@@ -2,22 +2,24 @@ spring:
   application:
     name: puja-backend
   cache:
-    type: simple
+    type: ${CACHE_TYPE:redis}
   data:
     redis:
       repositories:
         enabled: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
 
   datasource:
-    url: jdbc:mysql://localhost:3306/puja_marketplace
-    username: root
-    password: 8848
+    url: ${DB_URL:jdbc:mysql://localhost:3306/puja_marketplace}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   mail:
     host: smtp.gmail.com
     port: 587
-    username: agarwal.77.99shubham@gmail.com
+    username: ${MAIL_USERNAME:}
     password: ${MAIL_PASSWORD:}
     properties:
       mail:
@@ -35,7 +37,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
     open-in-view: false
 
   servlet:
@@ -57,11 +59,25 @@ app:
     auth-token: ${TWILIO_AUTH_TOKEN:}
     from-number: ${TWILIO_PHONE_NUMBER:}
   security:
-    jwt-secret: ${JWT_SECRET:change-this-jwt-secret-before-production-change-this-jwt-secret}
-    jwt-expiration-minutes: ${JWT_EXPIRATION_MINUTES:720}
+    jwt-secret: ${JWT_SECRET:}
+    jwt-expiration-minutes: ${JWT_EXPIRATION_MINUTES:15}
+    refresh-expiration-days: ${REFRESH_EXPIRATION_DAYS:30}
+    password-reset-token-expiration-minutes: ${PASSWORD_RESET_TOKEN_EXPIRATION_MINUTES:10}
+    shop-registration-session-token-expiration-minutes: ${SHOP_REGISTRATION_SESSION_TOKEN_EXPIRATION_MINUTES:30}
     admin-email: ${ADMIN_EMAIL:admin@puja-marketplace.local}
-    admin-password: ${ADMIN_PASSWORD:Admin@12345}
+    admin-password: ${ADMIN_PASSWORD:}
     admin-name: ${ADMIN_NAME:System Admin}
+    admin-allowed-ips: ${ADMIN_ALLOWED_IPS:}
+    admin-login-attempts: ${ADMIN_LOGIN_ATTEMPTS:5}
+    admin-login-window-seconds: ${ADMIN_LOGIN_WINDOW_SECONDS:600}
+    admin-mfa-otp-expiration-minutes: ${ADMIN_MFA_OTP_EXPIRATION_MINUTES:5}
   rate-limit:
     requests: ${RATE_LIMIT_REQUESTS:120}
     window-seconds: ${RATE_LIMIT_WINDOW_SECONDS:60}
+  payment:
+    key-id: ${RAZORPAY_KEY_ID:}
+    key-secret: ${RAZORPAY_KEY_SECRET:}
+    webhook-secret: ${RAZORPAY_WEBHOOK_SECRET:}
+    currency: ${PAYMENT_CURRENCY:INR}
+    kafka-payment-topic: ${KAFKA_PAYMENT_TOPIC:marketplace.payments.v1}
+    kafka-order-topic: ${KAFKA_ORDER_TOPIC:marketplace.orders.v1}

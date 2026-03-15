@@ -24,5 +24,5 @@ public interface ShopRegistrationService {
 
     ShopOtpResponse confirmPhoneVerification(ShopPhoneVerificationConfirmRequest request);
 
-    ShopFileUploadResponse uploadFile(String registrationId, String fieldName, MultipartFile file);
+    ShopFileUploadResponse uploadFile(String registrationId, String fieldName, MultipartFile file, String registrationSessionToken);
 }

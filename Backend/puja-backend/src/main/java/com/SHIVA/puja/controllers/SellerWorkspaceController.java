@@ -11,7 +11,7 @@ import com.SHIVA.puja.dto.SellerWorkspaceResponse;
 import com.SHIVA.puja.service.SellerWorkspaceService;
 
 @RestController
-@RequestMapping("/seller-dashboard")
+@RequestMapping({"/seller-dashboard", "/api/v1/seller-dashboard"})
 @CrossOrigin(origins = "http://localhost:4200")
 public class SellerWorkspaceController {
 
