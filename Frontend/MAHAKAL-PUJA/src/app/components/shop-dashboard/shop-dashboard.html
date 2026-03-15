@@ -1,0 +1,90 @@
+<section class="dashboard-shell">
+  <div class="dashboard-card" *ngIf="loading">
+    <p class="eyebrow">Shop Dashboard</p>
+    <h1>Loading your shop workspace...</h1>
+  </div>
+
+  <div class="dashboard-card error" *ngIf="!loading && error">
+    <p class="eyebrow">Shop Dashboard</p>
+    <h1>Dashboard unavailable</h1>
+    <p>{{ error }}</p>
+    <a routerLink="/shop-registration" class="dashboard-link">Return to shop registration</a>
+  </div>
+
+  <ng-container *ngIf="!loading && dashboard as shop">
+    <div class="dashboard-hero dashboard-card">
+      <div>
+        <p class="eyebrow">Your Shop Dashboard</p>
+        <h1>{{ shop.shopName || 'Shop submitted' }}</h1>
+        <p class="hero-copy">Your registration has been submitted. Operations and onboarding details are shown below.</p>
+      </div>
+
+      <div class="dashboard-status">
+        <span class="status-label">Status</span>
+        <strong>{{ shop.status }}</strong>
+        <small *ngIf="shop.submittedAt">Submitted on {{ shop.submittedAt | date:'medium' }}</small>
+      </div>
+    </div>
+
+    <div class="dashboard-grid">
+      <article class="dashboard-card">
+        <h2>Registration Summary</h2>
+        <dl>
+          <div>
+            <dt>Registration ID</dt>
+            <dd>{{ shop.registrationId }}</dd>
+          </div>
+          <div>
+            <dt>Shop Unique ID</dt>
+            <dd>{{ shop.shopUniqueId }}</dd>
+          </div>
+          <div>
+            <dt>Category</dt>
+            <dd>{{ shop.shopCategory || 'Not available' }}</dd>
+          </div>
+          <div>
+            <dt>Owner</dt>
+            <dd>{{ shop.ownerFullName || 'Not available' }}</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="dashboard-card">
+        <h2>Contact Details</h2>
+        <dl>
+          <div>
+            <dt>Email</dt>
+            <dd>{{ shop.email || 'Not available' }}</dd>
+          </div>
+          <div>
+            <dt>Phone</dt>
+            <dd>{{ shop.phoneNumber || 'Not available' }}</dd>
+          </div>
+          <div>
+            <dt>Shop Email</dt>
+            <dd>{{ shop.shopEmail || 'Not available' }}</dd>
+          </div>
+          <div>
+            <dt>Shop Phone</dt>
+            <dd>{{ shop.shopPhoneNumber || 'Not available' }}</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="dashboard-card span-2">
+        <h2>Business Address</h2>
+        <p>
+          {{ shop.addressLine1 || '' }}<span *ngIf="shop.addressLine2">, {{ shop.addressLine2 }}</span><br />
+          {{ shop.city || '' }}, {{ shop.state || '' }} {{ shop.pincode || '' }}<br />
+          {{ shop.country || 'India' }}
+        </p>
+      </article>
+
+      <article class="dashboard-card span-2">
+        <h2>Operational Note</h2>
+        <p>Your form data is stored in the backend `shop_registrations` table. OTP records are stored in `otp_requests`, and uploaded files are written under `uploads/shop-registration` with their file paths saved in the registration row.</p>
+        <a routerLink="/home" class="dashboard-link">Go to home</a>
+      </article>
+    </div>
+  </ng-container>
+</section>

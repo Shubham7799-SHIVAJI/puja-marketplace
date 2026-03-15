@@ -1,0 +1,38 @@
+<div class="upload-field">
+  <div
+    class="dropzone"
+    [class.dragging]="isDragging"
+    [class.uploaded]="uploaded"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+  >
+    <input class="file-input" type="file" [accept]="accept" (change)="onFileInput($event)" />
+
+    <div class="dropzone-copy">
+      <span class="upload-icon">&#8682;</span>
+      <div>
+        <h4>{{ label }}</h4>
+        <p>{{ helperText || 'Drag and drop or browse to upload.' }}</p>
+      </div>
+    </div>
+
+    <div *ngIf="hasImagePreview" class="preview-shell">
+      <img [src]="previewUrl" [alt]="label + ' preview'" />
+    </div>
+
+    <div *ngIf="fileName" class="file-meta">
+      <span class="file-name">{{ fileName }}</span>
+      <button type="button" class="clear-button" (click)="clear()">Replace</button>
+    </div>
+
+    <div *ngIf="isUploading || progress !== null" class="progress-shell">
+      <div class="progress-bar">
+        <span [style.width.%]="progress ?? 0"></span>
+      </div>
+      <small>{{ isUploading ? 'Uploading...' : 'Upload complete' }}</small>
+    </div>
+  </div>
+
+  <small *ngIf="error" class="error-text">{{ error }}</small>
+</div>

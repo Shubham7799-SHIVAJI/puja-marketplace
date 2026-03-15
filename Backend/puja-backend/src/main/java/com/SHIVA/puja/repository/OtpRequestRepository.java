@@ -10,4 +10,6 @@ import com.SHIVA.puja.entity.OtpRequest;
 public interface OtpRequestRepository extends JpaRepository<OtpRequest, Long> {
 
     Optional<OtpRequest> findTopByEmailAndPurposeAndVerifiedFalseOrderByIdDesc(String email, OtpPurpose purpose);
+
+    Optional<OtpRequest> findTopByPhoneNumberAndPurposeAndVerifiedFalseOrderByIdDesc(String phoneNumber, OtpPurpose purpose);
 }

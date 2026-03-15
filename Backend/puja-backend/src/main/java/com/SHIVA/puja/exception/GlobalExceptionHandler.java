@@ -35,6 +35,20 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
+    @ExceptionHandler(RequestValidationException.class)
+    public ResponseEntity<ApiErrorResponse> handleRequestValidationException(RequestValidationException exception) {
+        ApiErrorResponse response = ApiErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .code("VALIDATION_ERROR")
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(exception.getMessage())
+                .fieldErrors(exception.getFieldErrors())
+                .build();
+
+        return ResponseEntity.badRequest().body(response);
+    }
+
         @ExceptionHandler(ApiException.class)
         public ResponseEntity<ApiErrorResponse> handleApiException(ApiException exception) {
         HttpStatus status = exception.getStatus();
